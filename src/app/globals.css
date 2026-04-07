@@ -1,0 +1,257 @@
+/* Google Fonts - must be first */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&family=Noto+Sans+Arabic:wght@300;400;500;600;700;800&display=swap');
+
+@import "tailwindcss";
+
+@theme inline {
+  /* ProFranchise Brand Colors */
+  --color-forest: #0B4D32;
+  --color-teal: #009B91;
+  --color-forest-dark: #083a26;
+  --color-teal-light: #00b5aa;
+  --color-teal-50: #f0fdfb;
+  --color-teal-100: #d0f7f4;
+  --color-forest-50: #f0f7f4;
+
+  /* Neutrals */
+  --color-background: #ffffff;
+  --color-foreground: #0f172a;
+  --color-muted: #f8fafc;
+  --color-muted-foreground: #64748b;
+  --color-border: #e2e8f0;
+  --color-card: #ffffff;
+
+  /* Typography */
+  --font-sans: 'Montserrat', 'Archivo', system-ui, sans-serif;
+  --font-arabic: 'Noto Sans Arabic', 'Cairo', system-ui, sans-serif;
+}
+
+/* Base */
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* RTL support */
+[dir="rtl"] body,
+[lang="ar"] body {
+  font-family: var(--font-arabic);
+}
+
+[dir="rtl"] {
+  text-align: right;
+}
+
+/* Brand gradient */
+.gradient-brand {
+  background: linear-gradient(135deg, var(--color-forest) 0%, var(--color-teal) 100%);
+}
+
+.gradient-brand-text {
+  background: linear-gradient(135deg, var(--color-forest) 0%, var(--color-teal) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Hero overlay */
+.hero-overlay {
+  background: linear-gradient(
+    to right,
+    rgba(11, 77, 50, 0.85) 0%,
+    rgba(0, 155, 145, 0.6) 60%,
+    transparent 100%
+  );
+}
+
+[dir="rtl"] .hero-overlay {
+  background: linear-gradient(
+    to left,
+    rgba(11, 77, 50, 0.85) 0%,
+    rgba(0, 155, 145, 0.6) 60%,
+    transparent 100%
+  );
+}
+
+/* Network overlay effect */
+.network-pattern {
+  background-image: radial-gradient(circle at 2px 2px, rgba(0,155,145,0.15) 1px, transparent 0);
+  background-size: 40px 40px;
+}
+
+/* Section spacing */
+.section-padding {
+  padding-top: 5rem;
+  padding-bottom: 5rem;
+}
+
+@media (min-width: 1024px) {
+  .section-padding {
+    padding-top: 7rem;
+    padding-bottom: 7rem;
+  }
+}
+
+/* Hexagon shape */
+.hexagon {
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+}
+
+/* Smooth transitions */
+.transition-brand {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Admin sidebar */
+.admin-sidebar {
+  background: linear-gradient(180deg, var(--color-forest) 0%, var(--color-forest-dark) 100%);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-teal);
+  border-radius: 3px;
+}
+
+/* Line clamp utility */
+.line-clamp-2 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+.line-clamp-3 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+/* Focus ring */
+:focus-visible {
+  outline: 2px solid var(--color-teal);
+  outline-offset: 2px;
+}
+
+/* Input styles */
+.input-brand {
+  border: 1px solid var(--color-border);
+  border-radius: 0.5rem;
+  padding: 0.625rem 0.875rem;
+  font-size: 0.9rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  width: 100%;
+  background: white;
+}
+.input-brand:focus {
+  border-color: var(--color-teal);
+  box-shadow: 0 0 0 3px rgba(0, 155, 145, 0.15);
+  outline: none;
+}
+
+/* Button variants */
+.btn-primary {
+  background: linear-gradient(135deg, var(--color-forest), var(--color-teal));
+  color: white;
+  font-weight: 600;
+  padding: 0.75rem 2rem;
+  border-radius: 0.5rem;
+  transition: opacity 0.2s, transform 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  border: none;
+}
+.btn-primary:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.btn-outline {
+  border: 2px solid var(--color-teal);
+  color: var(--color-teal);
+  font-weight: 600;
+  padding: 0.625rem 1.75rem;
+  border-radius: 0.5rem;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  background: transparent;
+}
+.btn-outline:hover {
+  background: var(--color-teal);
+  color: white;
+}
+
+/* Card hover effect */
+.card-hover {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.card-hover:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 24px 48px rgba(11, 77, 50, 0.16), 0 8px 16px rgba(0, 155, 145, 0.08);
+}
+
+/* Gradient text utility */
+.gradient-text {
+  background: linear-gradient(135deg, var(--color-forest) 0%, var(--color-teal) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Table */
+.table-brand {
+  width: 100%;
+  border-collapse: collapse;
+}
+.table-brand th {
+  background: var(--color-forest);
+  color: white;
+  padding: 0.75rem 1rem;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+[dir="rtl"] .table-brand th {
+  text-align: right;
+}
+.table-brand td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--color-border);
+  font-size: 0.9rem;
+}
+.table-brand tr:hover td {
+  background: var(--color-teal-50);
+}
+
+/* Badge */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.6rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}

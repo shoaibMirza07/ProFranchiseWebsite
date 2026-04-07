@@ -1,0 +1,320 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ─── USERS & AUTH ───────────────────────────────────────────────────────────
+// role: ADMIN | MANAGER | SALES | WEB_ADMIN
+
+model User {
+  id            String    @id @default(cuid())
+  name          String
+  email         String    @unique
+  password      String
+  role          String    @default("SALES")
+  isActive      Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  assignedLeads Lead[]    @relation("AssignedTo")
+  createdLeads  Lead[]    @relation("CreatedBy")
+}
+
+// ─── SETTINGS ───────────────────────────────────────────────────────────────
+
+model Setting {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String
+  group     String   @default("general")
+  updatedAt DateTime @updatedAt
+}
+
+// ─── NAVIGATION / HEADER / FOOTER ───────────────────────────────────────────
+
+model NavItem {
+  id         String   @id @default(cuid())
+  labelEn    String
+  labelAr    String
+  href       String
+  order      Int      @default(0)
+  isActive   Boolean  @default(true)
+  isExternal Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model FooterSection {
+  id        String       @id @default(cuid())
+  position  String       // LEFT | CENTER | RIGHT
+  titleEn   String?
+  titleAr   String?
+  links     FooterLink[]
+  updatedAt DateTime     @updatedAt
+}
+
+model FooterLink {
+  id        String        @id @default(cuid())
+  labelEn   String
+  labelAr   String
+  href      String
+  order     Int           @default(0)
+  sectionId String
+  section   FooterSection @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+}
+
+// ─── PAGES & SECTIONS ───────────────────────────────────────────────────────
+
+model Page {
+  id          String        @id @default(cuid())
+  slug        String        @unique
+  titleEn     String
+  titleAr     String
+  isPublished Boolean       @default(true)
+  order       Int           @default(0)
+  sections    PageSection[]
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+}
+
+model PageSection {
+  id        String   @id @default(cuid())
+  pageId    String
+  page      Page     @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  type      String
+  order     Int      @default(0)
+  isVisible Boolean  @default(true)
+  contentEn String   @default("{}")
+  contentAr String   @default("{}")
+  updatedAt DateTime @updatedAt
+}
+
+// ─── BRANDS (PORTFOLIO) ─────────────────────────────────────────────────────
+
+model Brand {
+  id              String          @id @default(cuid())
+  slug            String          @unique
+  nameEn          String
+  nameAr          String
+  descriptionEn   String          @default("")
+  descriptionAr   String          @default("")
+  logoUrl         String?
+  displayOnWeb    Boolean         @default(true)
+  order           Int             @default(0)
+  netWorthEn      String          @default("")
+  netWorthAr      String          @default("")
+  liquidCapitalEn String          @default("")
+  liquidCapitalAr String          @default("")
+  experienceEn    String          @default("")
+  experienceAr    String          @default("")
+  siteProfileEn   String          @default("")
+  siteProfileAr   String          @default("")
+  whyPointsEn     String          @default("[]")
+  whyPointsAr     String          @default("[]")
+  contacts        BrandContact[]
+  locations       BrandLocation[]
+  leads           Lead[]
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+}
+
+model BrandLocation {
+  id      String @id @default(cuid())
+  brandId String
+  brand   Brand  @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  cityEn  String
+  cityAr  String
+  areaEn  String
+  areaAr  String
+  typeEn  String
+  typeAr  String
+  order   Int    @default(0)
+}
+
+model Contact {
+  id               String            @id @default(cuid())
+  nameEn           String
+  nameAr           String            @default("")
+  title            String            @default("")
+  email            String            @default("")
+  phone            String            @default("")
+  status           String            @default("ACTIVE")
+  notes            String            @default("")
+  brandContacts    BrandContact[]
+  partnerContacts  PartnerContact[]
+  customerContacts CustomerContact[]
+  leads            Lead[]
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+}
+
+model BrandContact {
+  brandId   String
+  contactId String
+  role      String  @default("")
+  brand     Brand   @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  contact   Contact @relation(fields: [contactId], references: [id], onDelete: Cascade)
+
+  @@id([brandId, contactId])
+}
+
+// ─── PARTNERS ───────────────────────────────────────────────────────────────
+
+model Partner {
+  id            String           @id @default(cuid())
+  nameEn        String
+  nameAr        String
+  descriptionEn String           @default("")
+  descriptionAr String           @default("")
+  logoUrl       String?
+  displayOnWeb  Boolean          @default(true)
+  order         Int              @default(0)
+  contacts      PartnerContact[]
+  leads         Lead[]
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+}
+
+model PartnerContact {
+  partnerId String
+  contactId String
+  role      String  @default("")
+  partner   Partner @relation(fields: [partnerId], references: [id], onDelete: Cascade)
+  contact   Contact @relation(fields: [contactId], references: [id], onDelete: Cascade)
+
+  @@id([partnerId, contactId])
+}
+
+// ─── CUSTOMERS ───────────────────────────────────────────────────────────────
+// status: ACTIVE | INACTIVE | PROSPECT
+
+model Customer {
+  id            String            @id @default(cuid())
+  nameEn        String
+  nameAr        String            @default("")
+  email         String            @default("")
+  phone         String            @default("")
+  industry      String            @default("")
+  notes         String            @default("")
+  status        String            @default("ACTIVE")
+  contacts      CustomerContact[]
+  leads         Lead[]
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+}
+
+model CustomerContact {
+  customerId String
+  contactId  String
+  role       String   @default("")
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  contact    Contact  @relation(fields: [contactId], references: [id], onDelete: Cascade)
+
+  @@id([customerId, contactId])
+}
+
+// ─── TEAM ────────────────────────────────────────────────────────────────────
+
+model TeamMember {
+  id            String   @id @default(cuid())
+  nameEn        String
+  nameAr        String
+  titleEn       String
+  titleAr       String
+  bioEn         String   @default("")
+  bioAr         String   @default("")
+  testimonialEn String   @default("")
+  testimonialAr String   @default("")
+  photoUrl      String?
+  displayOnWeb  Boolean  @default(true)
+  isLeadership  Boolean  @default(false)
+  order         Int      @default(0)
+  linkedIn      String?
+  xHandle       String   @default("")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+// ─── JOB APPLICANTS ─────────────────────────────────────────────────────────
+// gender: MALE | FEMALE | UNSPECIFIED
+// status: NEW | REVIEWED | SHORTLISTED | REJECTED | HIRED
+
+model JobApplicant {
+  id              String   @id @default(cuid())
+  fullName        String
+  email           String
+  phone           String   @default("")
+  nationality     String   @default("")
+  gender          String   @default("UNSPECIFIED")
+  experience      String   @default("")
+  companiesWorked String   @default("")
+  cvUrl           String?
+  jobAppliedFor   String   @default("")
+  status          String   @default("NEW")
+  notes           String   @default("")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+// ─── CRM PIPELINE ────────────────────────────────────────────────────────────
+// inquiryType: INVESTOR | BRAND_OWNER | VENDOR_SUPPLIER | GENERAL
+// stage: NEW | CONTACTED | QUALIFIED | PROPOSAL | NEGOTIATION | WON | LOST
+// priority: LOW | MEDIUM | HIGH
+
+model Lead {
+  id             String     @id @default(cuid())
+  fullName       String
+  email          String     @default("")
+  phone          String     @default("")
+  inquiryType    String     @default("GENERAL")
+  company        String     @default("")
+  message        String     @default("")
+  source         String     @default("website")
+  stage          String     @default("NEW")
+  priority       String     @default("MEDIUM")
+  notes          String     @default("")
+  proposalValue  Float?
+  expectedClose  DateTime?
+  contactId      String?
+  contact        Contact?   @relation(fields: [contactId], references: [id])
+  brandId        String?
+  brand          Brand?     @relation(fields: [brandId], references: [id])
+  partnerId      String?
+  partner        Partner?   @relation(fields: [partnerId], references: [id])
+  customerId     String?
+  customer       Customer?  @relation(fields: [customerId], references: [id])
+  assignedToId   String?
+  assignedTo     User?      @relation("AssignedTo", fields: [assignedToId], references: [id])
+  createdById    String?
+  createdBy      User?      @relation("CreatedBy", fields: [createdById], references: [id])
+  activities     Activity[]
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+}
+
+// activityType: NOTE | CALL | EMAIL | MEETING | STATUS_CHANGE
+
+model Activity {
+  id        String   @id @default(cuid())
+  leadId    String
+  lead      Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  type      String   @default("NOTE")
+  note      String
+  createdAt DateTime @default(now())
+}
+
+// ─── GALLERY ─────────────────────────────────────────────────────────────────
+
+model GalleryImage {
+  id        String   @id @default(cuid())
+  url       String
+  captionEn String   @default("")
+  captionAr String   @default("")
+  order     Int      @default(0)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+}

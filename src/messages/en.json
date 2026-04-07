@@ -1,0 +1,207 @@
+{
+  "nav": {
+    "home": "Home",
+    "about": "About Us",
+    "portfolio": "Our Portfolio",
+    "people": "People",
+    "contact": "Contact Us",
+    "cta": "Invest With Us"
+  },
+  "footer": {
+    "tagline": "Engineering the blueprints of regional brand success.",
+    "quickLinks": "Quick Links",
+    "rights": "All rights reserved.",
+    "company": "ProFranchise"
+  },
+  "home": {
+    "hero": {
+      "slide1": {
+        "label": "Purpose",
+        "title": "Engineering the blueprints of regional brand success."
+      },
+      "slide2": {
+        "label": "Vision",
+        "title": "To be the primary engine accelerating local brands onto the global stage."
+      },
+      "slide3": {
+        "label": "Mission",
+        "title": "We empower visionary people and leverage advanced technology to transform local potential into global standard-setters."
+      },
+      "cta": "Discover Our Portfolio"
+    },
+    "intro": {
+      "title": "Bridging Local Genius & Global Scale",
+      "body": "At ProFranchise, we bridge the gap between local genius and global scale. We don't just sell franchises; we engineer growth ecosystems."
+    },
+    "hexagon": {
+      "title": "The Hexagon of Success",
+      "subtitle": "Six interlocked pillars that define every franchise we engineer.",
+      "pillars": {
+        "brand": { "label": "The Brand", "desc": "Intellectual Property & DNA." },
+        "operator": { "label": "The Operator", "desc": "Strategic Capital & Leadership." },
+        "consumer": { "label": "The Consumer", "desc": "Consistency & Joy." },
+        "employees": { "label": "Motivated Employees", "desc": "Human brand ambassadors." },
+        "supplyChain": { "label": "Effective Supply-Chain", "desc": "Global quality standards." },
+        "technology": { "label": "Advanced Technology", "desc": "Digital Guardrails & QA." }
+      }
+    },
+    "brandSelection": {
+      "title": "How We Select Our Brands",
+      "subtitle": "Our rigorous three-point audit ensures only the strongest concepts enter our portfolio.",
+      "criteria": {
+        "integrity": {
+          "label": "Brand Integrity (Franchisor)",
+          "desc": "Is the concept unique and the IP protected?"
+        },
+        "joy": {
+          "label": "The Joy Factor (Consumer)",
+          "desc": "Is there repeatable demand for the experience?"
+        },
+        "blueprint": {
+          "label": "The Blueprint Factor (Operator)",
+          "desc": "Can the model be taught and scaled profitably?"
+        }
+      }
+    },
+    "brands": {
+      "title": "Our Brands",
+      "subtitle": "A curated portfolio of high-performance franchise concepts.",
+      "viewAll": "View All Brands",
+      "learnMore": "Learn More"
+    },
+    "invest": {
+      "title": "How Do You Invest With Us?",
+      "subtitle": "A transparent, four-step journey from profiling to partnership.",
+      "steps": {
+        "step1": { "label": "Step 1: Profiling", "desc": "Analyzing goals & capital." },
+        "step2": { "label": "Step 2: Matching", "desc": "Curated portfolio selection." },
+        "step3": { "label": "Step 3: Deep-Dive", "desc": "Technical & Financial transparency." },
+        "step4": { "label": "Step 4: Partnership", "desc": "Strategic launch and support." }
+      },
+      "cta": "Start Your Journey"
+    },
+    "strength": {
+      "title": "Our Strength",
+      "subtitle": "Built on precision, trust, and proven systems."
+    }
+  },
+  "about": {
+    "hero": {
+      "title": "About ProFranchise",
+      "subtitle": "The architects of franchise growth in the region."
+    },
+    "values": {
+      "title": "Our Core Values",
+      "items": {
+        "precision": { "label": "Precision", "desc": "Data-driven growth decisions." },
+        "equilibrium": { "label": "Equilibrium", "desc": "Balancing franchisor, investor, and consumer interests." },
+        "institutionalization": { "label": "Institutionalization", "desc": "Turning founder magic into professional systems." },
+        "transparency": { "label": "Transparency", "desc": "Radical honesty in every metric." },
+        "empowerment": { "label": "Empowerment", "desc": "Providing the tools for partners to lead." }
+      }
+    },
+    "partners": {
+      "title": "Our Partners",
+      "subtitle": "Strategic alliances that amplify our reach and capabilities."
+    },
+    "team": {
+      "title": "Our Team",
+      "subtitle": "The architects behind the blueprint."
+    }
+  },
+  "portfolio": {
+    "hero": {
+      "title": "Our Portfolio",
+      "subtitle": "High-performance franchise concepts engineered for regional success."
+    },
+    "viewBrand": "View Brand",
+    "brand": {
+      "intro": "Introduction",
+      "requirements": "Minimum Requirements",
+      "requirementsSubtitle": "To maintain the Blueprint of Success, all potential operators must meet the following criteria:",
+      "netWorth": "Net Worth",
+      "liquidCapital": "Liquid Capital",
+      "experience": "Experience",
+      "siteProfile": "Site Profile",
+      "locations": "Branch Locations",
+      "locationsSubtitle": "A snapshot of our current high-performance network:",
+      "city": "City",
+      "area": "Area",
+      "type": "Type",
+      "why": "Why This Brand?",
+      "backToPortfolio": "Back to Portfolio",
+      "investCta": "Invest in This Brand"
+    }
+  },
+  "people": {
+    "hero": {
+      "title": "Our People",
+      "subtitle": "The pulse of the Hexagon."
+    },
+    "intro": "Our people are the pulse of the Hexagon. We invest in talent that builds legacies.",
+    "gallery": {
+      "title": "Life at ProFranchise"
+    },
+    "careers": {
+      "title": "Join Our Team",
+      "subtitle": "Be part of something bigger. We're always looking for talent that builds legacies.",
+      "form": {
+        "fullName": "Full Name",
+        "email": "Email Address",
+        "phone": "Phone Number",
+        "nationality": "Nationality",
+        "gender": "Gender",
+        "genderMale": "Male",
+        "genderFemale": "Female",
+        "genderOther": "Prefer not to say",
+        "jobAppliedFor": "Position Applying For",
+        "experience": "Key Experiences",
+        "companiesWorked": "Companies Worked For",
+        "cvUpload": "Upload CV (PDF)",
+        "submit": "Submit Application",
+        "submitting": "Submitting...",
+        "success": "Your application has been submitted successfully!",
+        "error": "Something went wrong. Please try again."
+      }
+    }
+  },
+  "contact": {
+    "hero": {
+      "title": "Contact Us",
+      "subtitle": "Let's engineer something great together."
+    },
+    "form": {
+      "fullName": "Full Name",
+      "email": "Email Address",
+      "phone": "Phone Number",
+      "company": "Company / Organization",
+      "inquiryType": "Inquiry Type",
+      "inquiryTypes": {
+        "INVESTOR": "I am an Investor",
+        "BRAND_OWNER": "I own a Brand",
+        "VENDOR_SUPPLIER": "I am a Vendor / Supplier",
+        "GENERAL": "General Inquiry"
+      },
+      "message": "Your Message",
+      "submit": "Send Message",
+      "submitting": "Sending...",
+      "success": "Your message has been sent. We'll be in touch shortly.",
+      "error": "Something went wrong. Please try again."
+    },
+    "info": {
+      "title": "Get In Touch",
+      "address": "Address",
+      "phone": "Phone",
+      "email": "Email"
+    }
+  },
+  "common": {
+    "learnMore": "Learn More",
+    "viewAll": "View All",
+    "backToHome": "Back to Home",
+    "loading": "Loading...",
+    "noResults": "No results found.",
+    "required": "This field is required.",
+    "invalidEmail": "Please enter a valid email address."
+  }
+}
