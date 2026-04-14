@@ -42,6 +42,7 @@ export async function PUT(
       ...(body.descriptionEn !== undefined && { descriptionEn: body.descriptionEn }),
       ...(body.descriptionAr !== undefined && { descriptionAr: body.descriptionAr }),
       ...(body.logoUrl !== undefined && { logoUrl: body.logoUrl }),
+      ...(body.websiteUrl !== undefined && { websiteUrl: body.websiteUrl }),
       ...(body.displayOnWeb !== undefined && { displayOnWeb: body.displayOnWeb }),
       ...(body.order !== undefined && { order: body.order }),
     },

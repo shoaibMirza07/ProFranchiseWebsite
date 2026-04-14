@@ -14,6 +14,9 @@ interface BrandLocation {
   areaAr: string
   typeEn: string
   typeAr: string
+  lat?: number | null
+  lng?: number | null
+  googleMapsUrl?: string | null
   order: number
   _new?: boolean
   _deleted?: boolean
@@ -85,7 +88,8 @@ export default function BrandDetailPage({ params }: { params: Promise<{ id: stri
   // Locations
   const [locations, setLocations] = useState<BrandLocation[]>([])
   const [newLocation, setNewLocation] = useState<BrandLocation>({
-    cityEn: '', cityAr: '', areaEn: '', areaAr: '', typeEn: '', typeAr: '', order: 0,
+    cityEn: '', cityAr: '', areaEn: '', areaAr: '', typeEn: '', typeAr: '', 
+    lat: null, lng: null, googleMapsUrl: '', order: 0,
   })
   const [addingLocation, setAddingLocation] = useState(false)
 
@@ -215,7 +219,10 @@ export default function BrandDetailPage({ params }: { params: Promise<{ id: stri
       if (!res.ok) throw new Error('Failed to add location')
       const loc = await res.json()
       setLocations((prev) => [...prev, loc])
-      setNewLocation({ cityEn: '', cityAr: '', areaEn: '', areaAr: '', typeEn: '', typeAr: '', order: 0 })
+      setNewLocation({ 
+        cityEn: '', cityAr: '', areaEn: '', areaAr: '', typeEn: '', typeAr: '', 
+        lat: null, lng: null, googleMapsUrl: '', order: 0 
+      })
       setAddingLocation(false)
       showSaved('Location added!')
     } catch {
@@ -565,13 +572,40 @@ export default function BrandDetailPage({ params }: { params: Promise<{ id: stri
                     <div key={f.key}>
                       <label className="block text-xs font-medium text-gray-600 mb-1">{f.label}</label>
                       <input
-                        value={newLocation[f.key as keyof BrandLocation] as string}
+                        value={newLocation[f.key as keyof BrandLocation] as string || ''}
                         onChange={(e) => setNewLocation((p) => ({ ...p, [f.key]: e.target.value }))}
                         className="input-brand text-sm py-1.5"
                         dir={f.rtl ? 'rtl' : 'ltr'}
                       />
                     </div>
                   ))}
+                  <div>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">Lat (Optional)</label>
+                    <input
+                      type="number" step="any"
+                      value={newLocation.lat || ''}
+                      onChange={(e) => setNewLocation((p) => ({ ...p, lat: parseFloat(e.target.value) || null }))}
+                      className="input-brand text-sm py-1.5"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">Lng (Optional)</label>
+                    <input
+                      type="number" step="any"
+                      value={newLocation.lng || ''}
+                      onChange={(e) => setNewLocation((p) => ({ ...p, lng: parseFloat(e.target.value) || null }))}
+                      className="input-brand text-sm py-1.5"
+                    />
+                  </div>
+                  <div className="sm:col-span-2">
+                    <label className="block text-xs font-medium text-gray-600 mb-1">Google Maps URL</label>
+                    <input
+                      value={newLocation.googleMapsUrl || ''}
+                      onChange={(e) => setNewLocation((p) => ({ ...p, googleMapsUrl: e.target.value }))}
+                      className="input-brand text-sm py-1.5"
+                      placeholder="https://maps.google.com/..."
+                    />
+                  </div>
                 </div>
                 <div className="flex gap-2">
                   <button onClick={addLocation} className="btn-primary py-1.5 text-sm">
@@ -605,7 +639,16 @@ export default function BrandDetailPage({ params }: { params: Promise<{ id: stri
                         <span className="text-gray-500" dir="rtl">{loc.cityAr}</span>
                       </td>
                       <td className="px-3 py-2 text-gray-600">{loc.areaEn}</td>
-                      <td className="px-3 py-2 text-gray-600">{loc.typeEn}</td>
+                      <td className="px-3 py-2 text-gray-600">
+                        <div>{loc.typeEn}</div>
+                        {(loc.lat || loc.lng || loc.googleMapsUrl) && (
+                          <div className="text-[10px] text-[#009B91] font-medium mt-0.5">
+                            {loc.lat && `Lat: ${loc.lat.toFixed(4)} `}
+                            {loc.lng && `Lng: ${loc.lng.toFixed(4)} `}
+                            {loc.googleMapsUrl && "· Has Map Link"}
+                          </div>
+                        )}
+                      </td>
                       <td className="px-3 py-2">
                         <button
                           onClick={() => loc.id && deleteLocation(loc.id)}

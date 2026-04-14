@@ -12,6 +12,7 @@ interface Partner {
   descriptionEn: string | null
   descriptionAr: string | null
   logoUrl: string | null
+  websiteUrl: string | null
   displayOnWeb: boolean
   order: number
 }
@@ -22,6 +23,7 @@ const emptyForm = {
   descriptionEn: '',
   descriptionAr: '',
   logoUrl: '',
+  websiteUrl: '',
   displayOnWeb: true,
   order: 0,
 }
@@ -83,6 +85,7 @@ export default function PartnersPage() {
       descriptionEn: p.descriptionEn ?? '',
       descriptionAr: p.descriptionAr ?? '',
       logoUrl: p.logoUrl ?? '',
+      websiteUrl: p.websiteUrl ?? '',
       displayOnWeb: p.displayOnWeb,
       order: p.order,
     })
@@ -319,6 +322,15 @@ export default function PartnersPage() {
               className="input-brand w-full resize-none"
               dir="rtl"
               placeholder="وصف مختصر بالعربية"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">Website URL</label>
+            <input
+              value={form.websiteUrl}
+              onChange={(e) => setForm((p) => ({ ...p, websiteUrl: e.target.value }))}
+              className="input-brand w-full"
+              placeholder="https://example.com"
             />
           </div>
           <div>

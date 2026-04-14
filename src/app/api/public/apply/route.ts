@@ -20,6 +20,7 @@ export async function POST(req: NextRequest) {
       gender: gender ?? 'UNSPECIFIED',
       experience: experience ?? '',
       companiesWorked: companiesWorked ?? '',
+      heardAboutUs: body.heardAboutUs ?? '',
       cvUrl: cvUrl ?? null,
       jobAppliedFor: jobAppliedFor ?? '',
     },

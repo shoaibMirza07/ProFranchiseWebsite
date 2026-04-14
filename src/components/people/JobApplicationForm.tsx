@@ -14,6 +14,7 @@ type FormValues = {
   jobAppliedFor: string
   experience: string
   companiesWorked: string
+  heardAboutUs: string
   cv: FileList
 }
 
@@ -57,6 +58,7 @@ export default function JobApplicationForm() {
           jobAppliedFor: values.jobAppliedFor,
           experience: values.experience,
           companiesWorked: values.companiesWorked,
+          heardAboutUs: values.heardAboutUs,
           cvUrl,
         }),
       })
@@ -168,6 +170,14 @@ export default function JobApplicationForm() {
           {t('companiesWorked')}
         </label>
         <input {...register('companiesWorked')} className="input-brand" />
+      </div>
+
+      {/* Heard About Us */}
+      <div>
+        <label className="block text-sm font-medium text-slate-700 mb-1.5">
+          {t('heardAboutUs')}
+        </label>
+        <input {...register('heardAboutUs')} className="input-brand" />
       </div>
 
       {/* CV Upload */}

@@ -1,3 +1,4 @@
+// Prisma client instance — forced reload: 2026-04-14T19:25:00Z
 import { PrismaClient } from '@prisma/client'
 
 const globalForPrisma = globalThis as unknown as { prisma: PrismaClient }
