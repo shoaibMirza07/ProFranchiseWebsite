@@ -162,9 +162,9 @@ export default async function BrandDetailPage({ params }: Props) {
                     <td>{isAr ? loc.areaAr : loc.areaEn}</td>
                     <td>{isAr ? loc.typeAr : loc.typeEn}</td>
                     <td>
-                      {loc.googleMapsUrl ? (
+                      {(loc as any).googleMapsUrl ? (
                         <a
-                          href={loc.googleMapsUrl}
+                          href={(loc as any).googleMapsUrl}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="inline-flex items-center gap-1 text-[#009B91] hover:underline font-medium"
