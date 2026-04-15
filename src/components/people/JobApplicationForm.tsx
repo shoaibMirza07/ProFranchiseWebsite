@@ -14,6 +14,7 @@ type FormValues = {
   jobAppliedFor: string
   experience: string
   companiesWorked: string
+  heardAboutUs: string
   cv: FileList
 }
 
@@ -37,7 +38,7 @@ export default function JobApplicationForm() {
       if (values.cv?.[0]) {
         const fd = new FormData()
         fd.append('file', values.cv[0])
-        const res = await fetch('/api/upload', { method: 'POST', body: fd })
+        const res = await fetch('/api/public/upload', { method: 'POST', body: fd })
         if (res.ok) {
           const data = await res.json()
           cvUrl = data.url
@@ -57,6 +58,7 @@ export default function JobApplicationForm() {
           jobAppliedFor: values.jobAppliedFor,
           experience: values.experience,
           companiesWorked: values.companiesWorked,
+          heardAboutUs: values.heardAboutUs,
           cvUrl,
         }),
       })
@@ -168,6 +170,23 @@ export default function JobApplicationForm() {
           {t('companiesWorked')}
         </label>
         <input {...register('companiesWorked')} className="input-brand" />
+      </div>
+
+      {/* Heard About Us */}
+      <div>
+        <label className="block text-sm font-medium text-slate-700 mb-1.5">
+          {t('heardAboutUs')}
+        </label>
+        <select {...register('heardAboutUs')} className="input-brand">
+          <option value="">{t('heardAboutUsPlaceholder')}</option>
+          <option value="social_media">{t('heardSocialMedia')}</option>
+          <option value="friend_referral">{t('heardFriendReferral')}</option>
+          <option value="google_search">{t('heardGoogleSearch')}</option>
+          <option value="job_board">{t('heardJobBoard')}</option>
+          <option value="linkedin">{t('heardLinkedIn')}</option>
+          <option value="company_website">{t('heardCompanyWebsite')}</option>
+          <option value="other">{t('heardOther')}</option>
+        </select>
       </div>
 
       {/* CV Upload */}

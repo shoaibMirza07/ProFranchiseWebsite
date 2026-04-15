@@ -4,7 +4,7 @@ import { getLocale } from 'next-intl/server'
 import { prisma } from '@/lib/prisma'
 import { getPageSections, str } from '@/lib/content'
 import { Link } from '@/lib/navigation'
-import { ArrowLeft, ArrowRight, CheckCircle2, ChevronLeft } from 'lucide-react'
+import { ArrowLeft, ArrowRight, CheckCircle2, ChevronLeft, MapPin } from 'lucide-react'
 
 type Props = {
   params: Promise<{ slug: string; locale: string }>
@@ -141,7 +141,6 @@ export default async function BrandDetailPage({ params }: Props) {
         )}
 
         {/* Branch Locations */}
-        {brand.locations.length > 0 && (
           <section>
             <h2 className="text-2xl font-bold text-slate-900 mb-2 pb-2 border-b border-slate-100">
               {str(labels, 'locations', 'Branch Locations')}
@@ -153,20 +152,35 @@ export default async function BrandDetailPage({ params }: Props) {
                   <th>{str(labels, 'city', 'City')}</th>
                   <th>{str(labels, 'area', 'Area')}</th>
                   <th>{str(labels, 'type', 'Type')}</th>
+                  <th>{str(labels, 'map', 'Map')}</th>
                 </tr>
               </thead>
               <tbody>
                 {brand.locations.map(loc => (
                   <tr key={loc.id}>
-                    <td>{isAr ? loc.cityAr : loc.cityEn}</td>
+                    <td className="font-semibold">{isAr ? loc.cityAr : loc.cityEn}</td>
                     <td>{isAr ? loc.areaAr : loc.areaEn}</td>
                     <td>{isAr ? loc.typeAr : loc.typeEn}</td>
+                    <td>
+                      {loc.googleMapsUrl ? (
+                        <a
+                          href={loc.googleMapsUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1 text-[#009B91] hover:underline font-medium"
+                        >
+                          <MapPin size={14} />
+                          {isAr ? 'عرض الخريطة' : 'View Map'}
+                        </a>
+                      ) : (
+                        <span className="text-slate-300">—</span>
+                      )}
+                    </td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </section>
-        )}
 
         {/* Why This Brand */}
         {whyPoints.length > 0 && (

@@ -31,7 +31,7 @@ export async function POST(
 
   const { id } = await params
   const body = await req.json()
-  const { cityEn, cityAr, areaEn, areaAr, typeEn, typeAr, order } = body
+  const { cityEn, cityAr, areaEn, areaAr, typeEn, typeAr, lat, lng, googleMapsUrl, order } = body
 
   if (!cityEn || !cityAr || !areaEn || !areaAr || !typeEn || !typeAr) {
     return err('cityEn, cityAr, areaEn, areaAr, typeEn, and typeAr are required')
@@ -49,6 +49,9 @@ export async function POST(
       areaAr,
       typeEn,
       typeAr,
+      lat: lat ? parseFloat(lat) : null,
+      lng: lng ? parseFloat(lng) : null,
+      googleMapsUrl: googleMapsUrl ?? "",
       order: order ?? 0,
     },
   })
@@ -65,7 +68,7 @@ export async function PUT(
 
   const { id: brandId } = await params
   const body = await req.json()
-  const { locationId, cityEn, cityAr, areaEn, areaAr, typeEn, typeAr, order } = body
+  const { locationId, cityEn, cityAr, areaEn, areaAr, typeEn, typeAr, lat, lng, googleMapsUrl, order } = body
 
   if (!locationId) return err('locationId is required in body')
 
@@ -83,6 +86,9 @@ export async function PUT(
       ...(areaAr !== undefined && { areaAr }),
       ...(typeEn !== undefined && { typeEn }),
       ...(typeAr !== undefined && { typeAr }),
+      ...(lat !== undefined && { lat: lat ? parseFloat(lat) : null }),
+      ...(lng !== undefined && { lng: lng ? parseFloat(lng) : null }),
+      ...(googleMapsUrl !== undefined && { googleMapsUrl }),
       ...(order !== undefined && { order }),
     },
   })

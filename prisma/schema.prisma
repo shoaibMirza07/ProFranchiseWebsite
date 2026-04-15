@@ -123,16 +123,19 @@ model Brand {
 }
 
 model BrandLocation {
-  id      String @id @default(cuid())
-  brandId String
-  brand   Brand  @relation(fields: [brandId], references: [id], onDelete: Cascade)
-  cityEn  String
-  cityAr  String
-  areaEn  String
-  areaAr  String
-  typeEn  String
-  typeAr  String
-  order   Int    @default(0)
+  id            String  @id @default(cuid())
+  brandId       String
+  brand         Brand   @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  cityEn        String
+  cityAr        String
+  areaEn        String
+  areaAr        String
+  typeEn        String
+  typeAr        String
+  lat           Float?
+  lng           Float?
+  googleMapsUrl String? @default("")
+  order         Int     @default(0)
 }
 
 model Contact {
@@ -171,6 +174,7 @@ model Partner {
   descriptionEn String           @default("")
   descriptionAr String           @default("")
   logoUrl       String?
+  websiteUrl    String?          @default("")
   displayOnWeb  Boolean          @default(true)
   order         Int              @default(0)
   contacts      PartnerContact[]
@@ -254,6 +258,7 @@ model JobApplicant {
   companiesWorked String   @default("")
   cvUrl           String?
   jobAppliedFor   String   @default("")
+  heardAboutUs    String   @default("")
   status          String   @default("NEW")
   notes           String   @default("")
   createdAt       DateTime @default(now())
@@ -316,5 +321,16 @@ model GalleryImage {
   captionAr String   @default("")
   order     Int      @default(0)
   isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+}
+
+// ─── UPLOADED FILES (DB-backed storage for production) ──────────────────────
+
+model UploadedFile {
+  id        String   @id @default(cuid())
+  filename  String   @unique
+  mimeType  String
+  data      String   // base64-encoded file content
+  size      Int
   createdAt DateTime @default(now())
 }

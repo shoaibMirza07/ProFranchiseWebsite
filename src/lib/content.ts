@@ -26,6 +26,26 @@ export async function getPageSections(slug: string, locale: string): Promise<Rec
   return result
 }
 
+/** Load all sections for a page as an ordered list of { type, content } */
+export async function getPageSectionsOrdered(slug: string, locale: string): Promise<{ id: string; type: string; content: SectionContent }[]> {
+  const page = await prisma.page.findUnique({
+    where: { slug },
+    include: { sections: { where: { isVisible: true }, orderBy: { order: 'asc' } } }
+  })
+  if (!page) return []
+
+  return page.sections.map(section => {
+    let content: SectionContent = {}
+    try {
+      const raw = locale === 'ar' ? section.contentAr : section.contentEn
+      content = JSON.parse(raw || '{}')
+    } catch {
+      content = {}
+    }
+    return { id: section.id, type: section.type, content }
+  })
+}
+
 /** Shorthand to get a single section's content */
 export async function getSectionContent(slug: string, type: string, locale: string): Promise<SectionContent> {
   const sections = await getPageSections(slug, locale)
