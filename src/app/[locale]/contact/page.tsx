@@ -3,6 +3,10 @@ import { prisma } from '@/lib/prisma'
 import { getPageSections, getSettings, str, arr } from '@/lib/content'
 import ContactForm from '@/components/contact/ContactForm'
 import PageHero from '@/components/ui/PageHero'
+import TextBlockSection from '@/components/ui/TextBlockSection'
+import CardsSection from '@/components/ui/CardsSection'
+import InvestSection from '@/components/ui/InvestSection'
+import GallerySection from '@/components/ui/GallerySection'
 import { MapPin, Phone, Mail } from 'lucide-react'
 
 type InquiryOption = { value: string; label: string }
@@ -109,6 +113,25 @@ export default async function ContactPage() {
           </div>
         </div>
       </section>
+
+      {/* Generic CMS Sections */}
+      {Object.entries(sections).map(([type, content]) => {
+        // Skip hardcoded sections
+        if (type === 'hero' || type === 'inquiry_types') return null
+
+        switch (type) {
+          case 'text-block':
+            return <TextBlockSection key={type} content={content} />
+          case 'cards':
+            return <CardsSection key={type} content={content} locale={locale} />
+          case 'invest':
+            return <InvestSection key={type} content={content} locale={locale} />
+          case 'gallery':
+            return <GallerySection key={type} content={content} locale={locale} images={[]} />
+          default:
+            return null
+        }
+      })}
     </>
   )
 }

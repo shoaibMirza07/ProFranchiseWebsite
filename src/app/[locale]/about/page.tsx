@@ -4,9 +4,11 @@ import { ExternalLink, AtSign } from 'lucide-react'
 import { prisma } from '@/lib/prisma'
 import { getPageSectionsOrdered, str, arr, SectionContent } from '@/lib/content'
 import PageHero from '@/components/ui/PageHero'
+import TextBlockSection from '@/components/ui/TextBlockSection'
 import ValuesSection from '@/components/about/ValuesSection'
 import CardsSection from '@/components/ui/CardsSection'
 import GallerySection from '@/components/ui/GallerySection'
+import InvestSection from '@/components/ui/InvestSection'
 
 type ValueItem = { icon: string; label: string; desc: string }
 
@@ -140,6 +142,9 @@ export default async function AboutPage() {
             )
           }
 
+          case 'text-block':
+            return <TextBlockSection key={id} content={content} />
+
           case 'values':
             return <ValuesSection key={id} title={str(content, 'title')} items={arr<ValueItem>(content, 'items')} />
 
@@ -216,6 +221,9 @@ export default async function AboutPage() {
 
           case 'cards':
             return <CardsSection key={id} content={content} locale={locale} />
+
+          case 'invest':
+            return <InvestSection key={id} content={content} locale={locale} />
 
           case 'gallery':
             return <GallerySection key={id} content={content} locale={locale} images={galleryImages as any} />
