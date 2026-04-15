@@ -11,7 +11,15 @@ const nextConfig: NextConfig = {
     ],
     unoptimized: true,
   },
-  serverExternalPackages: ['@prisma/client']
+  serverExternalPackages: ['@prisma/client'],
+  async rewrites() {
+    return [
+      {
+        source: '/uploads/:path*',
+        destination: '/api/files/:path*',
+      },
+    ]
+  },
 }
 
 export default withNextIntl(nextConfig)

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, use, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
-import { Save, Loader2, Plus, Trash2, ArrowLeft, Search, X } from 'lucide-react'
+import { Save, Loader2, Plus, Trash2, ArrowLeft, Search, X, Pencil } from 'lucide-react'
 import ImageUpload from '@/components/admin/ImageUpload'
 import Link from 'next/link'
 
@@ -92,6 +92,8 @@ export default function BrandDetailPage({ params }: { params: Promise<{ id: stri
     lat: null, lng: null, googleMapsUrl: '', order: 0,
   })
   const [addingLocation, setAddingLocation] = useState(false)
+  const [editingLocation, setEditingLocation] = useState<BrandLocation | null>(null)
+  const [editForm, setEditForm] = useState<BrandLocation | null>(null)
 
   // Contacts
   const [contacts, setContacts] = useState<Contact[]>([])
@@ -227,6 +229,30 @@ export default function BrandDetailPage({ params }: { params: Promise<{ id: stri
       showSaved('Location added!')
     } catch {
       setError('Failed to add location')
+    }
+  }
+
+  const startEdit = (loc: BrandLocation) => {
+    setEditingLocation(loc)
+    setEditForm({ ...loc })
+  }
+
+  const updateLocation = async () => {
+    if (!editForm || !editingLocation) return
+    try {
+      const res = await fetch(`/api/brands/${id}/locations`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...editForm, locationId: editingLocation.id }),
+      })
+      if (!res.ok) throw new Error('Failed to update location')
+      const loc = await res.json()
+      setLocations((prev) => prev.map((l) => (l.id === loc.id ? loc : l)))
+      setEditingLocation(null)
+      setEditForm(null)
+      showSaved('Location updated!')
+    } catch {
+      setError('Failed to update location')
     }
   }
 
@@ -650,17 +676,89 @@ export default function BrandDetailPage({ params }: { params: Promise<{ id: stri
                         )}
                       </td>
                       <td className="px-3 py-2">
-                        <button
-                          onClick={() => loc.id && deleteLocation(loc.id)}
-                          className="text-gray-400 hover:text-red-500"
-                        >
-                          <Trash2 size={14} />
-                        </button>
+                        <div className="flex items-center gap-1.5">
+                          <button
+                            onClick={() => startEdit(loc)}
+                            className="text-gray-400 hover:text-[#009B91]"
+                          >
+                            <Pencil size={14} />
+                          </button>
+                          <button
+                            onClick={() => loc.id && deleteLocation(loc.id)}
+                            className="text-gray-400 hover:text-red-500"
+                          >
+                            <Trash2 size={14} />
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
+            )}
+
+            {editingLocation && editForm && (
+              <div className="border border-[#009B91]/30 bg-[#009B91]/5 rounded-lg p-4 space-y-3 mt-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-sm font-bold text-gray-900">Edit Location: {editingLocation.cityEn}</h3>
+                  <button onClick={() => { setEditingLocation(null); setEditForm(null); }} className="text-gray-400"><X size={16} /></button>
+                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                  {[
+                    { key: 'cityEn', label: 'City (EN)' },
+                    { key: 'cityAr', label: 'City (AR)', rtl: true },
+                    { key: 'areaEn', label: 'Area (EN)' },
+                    { key: 'areaAr', label: 'Area (AR)', rtl: true },
+                    { key: 'typeEn', label: 'Type (EN)' },
+                    { key: 'typeAr', label: 'Type (AR)', rtl: true },
+                  ].map((f) => (
+                    <div key={f.key}>
+                      <label className="block text-xs font-medium text-gray-600 mb-1">{f.label}</label>
+                      <input
+                        value={editForm[f.key as keyof BrandLocation] as string || ''}
+                        onChange={(e) => setEditForm((p) => ({ ...p!, [f.key]: e.target.value }))}
+                        className="input-brand text-sm py-1.5"
+                        dir={f.rtl ? 'rtl' : 'ltr'}
+                      />
+                    </div>
+                  ))}
+                  <div>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">Lat</label>
+                    <input
+                      type="number" step="any"
+                      value={editForm.lat || ''}
+                      onChange={(e) => setEditForm((p) => ({ ...p!, lat: parseFloat(e.target.value) || null }))}
+                      className="input-brand text-sm py-1.5"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">Lng</label>
+                    <input
+                      type="number" step="any"
+                      value={editForm.lng || ''}
+                      onChange={(e) => setEditForm((p) => ({ ...p!, lng: parseFloat(e.target.value) || null }))}
+                      className="input-brand text-sm py-1.5"
+                    />
+                  </div>
+                  <div className="sm:col-span-2">
+                    <label className="block text-xs font-medium text-gray-600 mb-1">Google Maps URL</label>
+                    <input
+                      value={editForm.googleMapsUrl || ''}
+                      onChange={(e) => setEditForm((p) => ({ ...p!, googleMapsUrl: e.target.value }))}
+                      className="input-brand text-sm py-1.5"
+                      placeholder="https://maps.google.com/..."
+                    />
+                  </div>
+                </div>
+                <div className="flex gap-2">
+                  <button onClick={updateLocation} className="btn-primary py-1.5 text-sm">
+                    <Save size={14} /> Update
+                  </button>
+                  <button onClick={() => { setEditingLocation(null); setEditForm(null); }} className="px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg">
+                    Cancel
+                  </button>
+                </div>
+              </div>
             )}
           </div>
         )}

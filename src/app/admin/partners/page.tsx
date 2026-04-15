@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Plus, Pencil, Trash2, Loader2, Search } from 'lucide-react'
+import { Plus, Pencil, Trash2, Loader2, Search, Eye, ExternalLink } from 'lucide-react'
 import Modal from '@/components/admin/Modal'
 import ImageUpload from '@/components/admin/ImageUpload'
 
@@ -51,6 +51,7 @@ export default function PartnersPage() {
   const [form, setForm] = useState(emptyForm)
   const [saving, setSaving] = useState(false)
   const [formError, setFormError] = useState('')
+  const [viewPartner, setViewPartner] = useState<Partner | null>(null)
 
   useEffect(() => {
     fetchPartners()
@@ -245,6 +246,13 @@ export default function PartnersPage() {
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-2">
                       <button
+                        onClick={() => setViewPartner(partner)}
+                        className="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded"
+                        title="View Details"
+                      >
+                        <Eye size={14} />
+                      </button>
+                      <button
                         onClick={() => openEdit(partner)}
                         className="p-1.5 text-gray-400 hover:text-[#009B91] hover:bg-teal-50 rounded"
                         title="Edit"
@@ -380,6 +388,97 @@ export default function PartnersPage() {
             </button>
           </div>
         </div>
+      </Modal>
+
+      {/* View Details Modal */}
+      <Modal
+        open={!!viewPartner}
+        onClose={() => setViewPartner(null)}
+        title="Partner Details"
+        size="lg"
+      >
+        {viewPartner && (
+          <div className="space-y-5">
+            {/* Logo & Name Header */}
+            <div className="flex items-center gap-4 pb-4 border-b border-gray-100">
+              {viewPartner.logoUrl ? (
+                <img
+                  src={viewPartner.logoUrl}
+                  alt={viewPartner.nameEn}
+                  className="h-20 w-20 object-contain rounded-lg border border-gray-200 p-1"
+                />
+              ) : (
+                <div className="h-20 w-20 rounded-lg border border-gray-200 bg-[#0B4D32]/10 flex items-center justify-center text-[#0B4D32] text-xl font-bold">
+                  {viewPartner.nameEn.split(' ').slice(0, 2).map(w => w[0]?.toUpperCase() ?? '').join('')}
+                </div>
+              )}
+              <div>
+                <h3 className="text-lg font-bold text-gray-900">{viewPartner.nameEn}</h3>
+                {viewPartner.nameAr && (
+                  <p className="text-sm text-gray-500 mt-0.5" dir="rtl">{viewPartner.nameAr}</p>
+                )}
+                <div className="flex items-center gap-2 mt-1.5">
+                  <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
+                    viewPartner.displayOnWeb
+                      ? 'bg-green-50 text-green-700 border border-green-200'
+                      : 'bg-gray-50 text-gray-500 border border-gray-200'
+                  }`}>
+                    {viewPartner.displayOnWeb ? 'Visible on Web' : 'Hidden'}
+                  </span>
+                  <span className="text-xs text-gray-400">Order: {viewPartner.order}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Details Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Description (EN)</label>
+                <p className="text-sm text-gray-700 bg-gray-50 rounded-lg p-3 min-h-[60px]">
+                  {viewPartner.descriptionEn || <span className="text-gray-300 italic">No description</span>}
+                </p>
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Description (AR)</label>
+                <p className="text-sm text-gray-700 bg-gray-50 rounded-lg p-3 min-h-[60px]" dir="rtl">
+                  {viewPartner.descriptionAr || <span className="text-gray-300 italic">لا يوجد وصف</span>}
+                </p>
+              </div>
+            </div>
+
+            {/* Website URL */}
+            {viewPartner.websiteUrl && (
+              <div>
+                <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Website</label>
+                <a
+                  href={viewPartner.websiteUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 text-sm text-[#009B91] hover:underline font-medium"
+                >
+                  <ExternalLink size={14} />
+                  {viewPartner.websiteUrl}
+                </a>
+              </div>
+            )}
+
+            {/* Actions Footer */}
+            <div className="flex justify-end gap-3 pt-3 border-t border-gray-100">
+              <button
+                onClick={() => setViewPartner(null)}
+                className="px-4 py-2 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50"
+              >
+                Close
+              </button>
+              <button
+                onClick={() => { setViewPartner(null); openEdit(viewPartner); }}
+                className="btn-primary flex items-center gap-2 px-4 py-2 text-sm"
+              >
+                <Pencil size={14} /> Edit Partner
+              </button>
+            </div>
+          </div>
+        )}
       </Modal>
     </div>
   )

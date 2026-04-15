@@ -17,13 +17,50 @@ export async function POST(req: NextRequest) {
   if (auth.error) return auth.error
 
   const body = await req.json()
+
+  // Support batch update: if body is an array, process each section
+  if (Array.isArray(body)) {
+    const results = []
+    for (const section of body) {
+      const result = await upsertFooterSection(section)
+      if ('error' in result) return err(result.error, result.status)
+      results.push(result.data)
+    }
+    return ok(results)
+  }
+
+  // Single object
+  const result = await upsertFooterSection(body)
+  if ('error' in result) return err(result.error, result.status)
+  return ok(result.data, result.created ? 201 : 200)
+}
+
+type LinkInput = { labelEn: string; labelAr: string; href: string; order?: number }
+
+async function upsertFooterSection(body: {
+  id?: string; position?: string; titleEn?: string; titleAr?: string; links?: LinkInput[]
+}): Promise<{ data: unknown; created?: boolean } | { error: string; status: number }> {
   const { id, position, titleEn, titleAr, links } = body
 
-  if (!position) return err('position is required')
+  if (!position) return { error: 'position is required', status: 400 }
+
+  const linksData = links
+    ? {
+        links: {
+          deleteMany: {},
+          create: links.map((link, index) => ({
+            labelEn: link.labelEn,
+            labelAr: link.labelAr,
+            href: link.href,
+            order: link.order ?? index,
+          })),
+        },
+      }
+    : {}
 
   if (id) {
     const existing = await prisma.footerSection.findUnique({ where: { id } })
-    if (!existing) return err('Footer section not found', 404)
+    if (!existing) return { error: 'Footer section not found', status: 404 }
 
     const section = await prisma.footerSection.update({
       where: { id },
@@ -31,22 +68,12 @@ export async function POST(req: NextRequest) {
         position,
         titleEn: titleEn ?? null,
         titleAr: titleAr ?? null,
-        ...(links && {
-          links: {
-            deleteMany: {},
-            create: (links as { labelEn: string; labelAr: string; href: string; order?: number }[]).map((link, index) => ({
-              labelEn: link.labelEn,
-              labelAr: link.labelAr,
-              href: link.href,
-              order: link.order ?? index,
-            })),
-          },
-        }),
+        ...linksData,
       },
       include: { links: { orderBy: { order: 'asc' } } },
     })
 
-    return ok(section)
+    return { data: section }
   }
 
   const section = await prisma.footerSection.create({
@@ -54,19 +81,10 @@ export async function POST(req: NextRequest) {
       position,
       titleEn: titleEn ?? null,
       titleAr: titleAr ?? null,
-      ...(links && {
-        links: {
-          create: (links as { labelEn: string; labelAr: string; href: string; order?: number }[]).map((link, index) => ({
-            labelEn: link.labelEn,
-            labelAr: link.labelAr,
-            href: link.href,
-            order: link.order ?? index,
-          })),
-        },
-      }),
+      ...linksData,
     },
     include: { links: { orderBy: { order: 'asc' } } },
   })
 
-  return ok(section, 201)
+  return { data: section, created: true }
 }

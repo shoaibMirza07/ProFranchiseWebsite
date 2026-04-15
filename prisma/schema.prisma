@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -321,5 +321,16 @@ model GalleryImage {
   captionAr String   @default("")
   order     Int      @default(0)
   isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+}
+
+// ─── UPLOADED FILES (DB-backed storage for production) ──────────────────────
+
+model UploadedFile {
+  id        String   @id @default(cuid())
+  filename  String   @unique
+  mimeType  String
+  data      String   // base64-encoded file content
+  size      Int
   createdAt DateTime @default(now())
 }
