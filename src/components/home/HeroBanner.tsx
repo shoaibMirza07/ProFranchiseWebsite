@@ -17,14 +17,19 @@ type SlideData = {
   label: string
   title: string
   titleSize?: string
+  imageUrl?: string
+  subtitle?: string
+  ctaText?: string
+  ctaUrl?: string
 }
 
 type Props = {
   slides: SlideData[]
   cta: string
+  bgUrl?: string
 }
 
-export default function HeroBanner({ slides, cta }: Props) {
+export default function HeroBanner({ slides, cta, bgUrl }: Props) {
   const displaySlides = slides.length > 0 ? slides : [{ label: '', title: '' }]
 
   const [current, setCurrent] = useState(0)
@@ -75,7 +80,22 @@ export default function HeroBanner({ slides, cta }: Props) {
   }
 
   return (
-    <section className="relative h-screen min-h-[600px] overflow-hidden">
+    <section 
+      className="relative h-screen min-h-[600px] overflow-hidden"
+      style={{
+        background: bgUrl && !bgUrl.match(/\.(mp4|webm)$/i) ? `url(${bgUrl}) center/cover no-repeat` : undefined
+      }}
+    >
+      {bgUrl?.match(/\.(mp4|webm)$/i) && (
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover"
+          src={bgUrl}
+        />
+      )}
       <AnimatePresence custom={direction} initial={false}>
         <motion.div
           key={current}
@@ -85,7 +105,9 @@ export default function HeroBanner({ slides, cta }: Props) {
           animate="center"
           exit="exit"
           className="absolute inset-0"
-          style={{ background: gradient }}
+          style={{ 
+            background: !bgUrl ? gradient : undefined 
+          }}
         >
           {/* Network pattern overlay */}
           <div className="absolute inset-0 network-pattern opacity-40" />
@@ -104,36 +126,68 @@ export default function HeroBanner({ slides, cta }: Props) {
               initial="hidden"
               animate="visible"
               exit={{ opacity: 0, y: -20, transition: { duration: 0.3 } }}
-              className="max-w-2xl"
+              className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center"
             >
-              {/* Label badge */}
-              {slide.label && (
-                <span
-                  className="inline-block px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest mb-5 border"
-                  style={{
-                    background: 'rgba(0,155,145,0.2)',
-                    borderColor: 'rgba(0,155,145,0.6)',
-                    color: '#009B91',
-                  }}
-                >
-                  {slide.label}
-                </span>
-              )}
+              <div className="lg:col-span-6 max-w-2xl">
+                {/* Label badge */}
+                {slide.label && (
+                  <span
+                    className="inline-block px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest mb-5 border"
+                    style={{
+                      background: 'rgba(0,155,145,0.2)',
+                      borderColor: 'rgba(0,155,145,0.6)',
+                      color: '#009B91',
+                    }}
+                  >
+                    {slide.label}
+                  </span>
+                )}
 
-              {/* Title */}
-              <h1 className={`${slide.titleSize ?? 'text-5xl'} font-extrabold text-white leading-tight mb-8`}>
-                {slide.title}
-              </h1>
+                {/* Title */}
+                <h1 className={`${slide.titleSize ?? 'text-5xl'} font-extrabold text-white leading-tight mb-6`}>
+                  {slide.title}
+                </h1>
 
-              {/* CTA */}
-              {cta && (
-                <Link
-                  href="/portfolio"
-                  className="btn-primary text-base"
-                >
-                  {cta}
-                  <ChevronRight size={18} />
-                </Link>
+                {/* Subtitle */}
+                {slide.subtitle && (
+                  <p className="text-lg text-white/90 mb-8 max-w-xl">
+                    {slide.subtitle}
+                  </p>
+                )}
+
+                {/* CTA */}
+                {(slide.ctaText || cta) && (
+                  <Link
+                    href={slide.ctaUrl || '/portfolio'}
+                    className="btn-primary text-base"
+                  >
+                    {slide.ctaText || cta}
+                    <ChevronRight size={18} />
+                  </Link>
+                )}
+              </div>
+
+              {slide.imageUrl && (
+                <div className="lg:col-span-6 mt-8 lg:mt-0">
+                  <div className="relative w-full aspect-video lg:aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl border border-white/20 ml-auto">
+                    {slide.imageUrl.match(/\.(mp4|webm)$/i) ? (
+                      <video
+                        autoPlay
+                        loop
+                        muted
+                        playsInline
+                        className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-700"
+                        src={slide.imageUrl}
+                      />
+                    ) : (
+                      <img
+                        src={slide.imageUrl}
+                        alt={slide.title}
+                        className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-700"
+                      />
+                    )}
+                  </div>
+                </div>
               )}
             </motion.div>
           </AnimatePresence>

@@ -3,6 +3,10 @@ import { prisma } from '@/lib/prisma'
 import { getPageSections, str } from '@/lib/content'
 import PageHero from '@/components/ui/PageHero'
 import PortfolioSearch from '@/components/portfolio/PortfolioSearch'
+import TextBlockSection from '@/components/ui/TextBlockSection'
+import CardsSection from '@/components/ui/CardsSection'
+import InvestSection from '@/components/ui/InvestSection'
+import GallerySection from '@/components/ui/GallerySection'
 
 async function getBrands() {
   return prisma.brand.findMany({
@@ -40,6 +44,25 @@ export default async function PortfolioPage() {
           <PortfolioSearch brands={brands} />
         </div>
       </section>
+
+      {/* Generic CMS Sections */}
+      {Object.entries(sections).map(([type, content]) => {
+        // Skip hero since it's hardcoded at the top
+        if (type === 'hero' || type === 'brand_sheet') return null
+
+        switch (type) {
+          case 'text-block':
+            return <TextBlockSection key={type} content={content} />
+          case 'cards':
+            return <CardsSection key={type} content={content} locale={locale} />
+          case 'invest':
+            return <InvestSection key={type} content={content} locale={locale} />
+          case 'gallery':
+            return <GallerySection key={type} content={content} locale={locale} images={[]} />
+          default:
+            return null
+        }
+      })}
     </>
   )
 }

@@ -6,6 +6,8 @@ import PageHero from '@/components/ui/PageHero'
 import JobApplicationForm from '@/components/people/JobApplicationForm'
 import TeamGrid from '@/components/people/TeamGrid'
 import CardsSection from '@/components/ui/CardsSection'
+import TextBlockSection from '@/components/ui/TextBlockSection'
+import InvestSection from '@/components/ui/InvestSection'
 
 async function getTeamMembers() {
   try {
@@ -71,8 +73,14 @@ export default async function PeoplePage() {
               )
             }
 
+            case 'text-block':
+              return <TextBlockSection key={id} content={content} />
+
             case 'cards':
               return <CardsSection key={id} content={content} locale={locale} />
+
+            case 'invest':
+              return <InvestSection key={id} content={content} locale={locale} />
 
             case 'gallery':
               if (galleryImages.length === 0) return null
