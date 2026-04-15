@@ -179,7 +179,7 @@ export default async function AboutPage() {
                     {partners.map((partner) => {
                       const name = isAr ? partner.nameAr : partner.nameEn
                       const desc = isAr ? (partner.descriptionAr || partner.descriptionEn) : (partner.descriptionEn || partner.descriptionAr)
-                      const isClickable = !!partner.websiteUrl || !!desc
+                      const isClickable = !!(partner as any).websiteUrl || !!desc
                       
                       const CardContent = (
                         <div className="bg-white rounded-2xl border border-slate-100 p-6 flex flex-col items-center justify-center gap-4 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 h-full group">
@@ -196,7 +196,7 @@ export default async function AboutPage() {
                             <p className="text-sm font-bold text-slate-800 leading-tight group-hover:text-[#009B91] transition-colors">{name}</p>
                             {desc && <p className="text-[10px] text-slate-400 mt-1 line-clamp-2 leading-tight">{desc}</p>}
                           </div>
-                          {partner.websiteUrl && (
+                          {(partner as any).websiteUrl && (
                             <div className="mt-auto pt-2 opacity-0 group-hover:opacity-100 transition-opacity">
                               <ExternalLink size={14} className="text-[#009B91]" />
                             </div>
@@ -204,8 +204,8 @@ export default async function AboutPage() {
                         </div>
                       )
 
-                      if (partner.websiteUrl) {
-                        return <a key={partner.id} href={partner.websiteUrl} target="_blank" rel="noopener noreferrer">{CardContent}</a>
+                      if ((partner as any).websiteUrl) {
+                        return <a key={partner.id} href={(partner as any).websiteUrl} target="_blank" rel="noopener noreferrer">{CardContent}</a>
                       }
                       return <div key={partner.id}>{CardContent}</div>
                     })}
