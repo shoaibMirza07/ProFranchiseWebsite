@@ -1,9 +1,8 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { Link } from '@/lib/navigation'
-import { ArrowRight } from 'lucide-react'
-import { SectionContent, str, arr } from '@/lib/content'
+import { SectionContent, str, arr, getCtas } from '@/lib/content'
+import CtaGroup from '@/components/ui/CtaGroup'
 
 type StepData = { number: string; label: string; desc: string }
 
@@ -11,7 +10,7 @@ export default function InvestSection({ content, locale }: { content: SectionCon
   const isAr = locale === 'ar'
   const title = str(content, 'title')
   const subtitle = str(content, 'subtitle')
-  const cta = str(content, 'cta')
+  const ctas = getCtas(content, 'ctas')
   const steps = arr<StepData>(content, 'steps')
 
   if (steps.length === 0 && !title) return null
@@ -68,14 +67,7 @@ export default function InvestSection({ content, locale }: { content: SectionCon
           </div>
         </div>
 
-        {cta && (
-          <div className="text-center mt-16">
-            <Link href="/contact" className="btn-primary text-base">
-              {cta}
-              <ArrowRight size={18} className={isAr ? 'rotate-180 ml-0 mr-2' : 'ml-2'} />
-            </Link>
-          </div>
-        )}
+        <CtaGroup ctas={ctas} align="center" className="mt-16" />
       </div>
     </section>
   )

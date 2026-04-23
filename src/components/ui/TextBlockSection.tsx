@@ -1,7 +1,6 @@
 import Image from 'next/image'
-import { Link } from '@/lib/navigation'
-import { SectionContent, str } from '@/lib/content'
-import { ChevronRight } from 'lucide-react'
+import { SectionContent, str, getCtas } from '@/lib/content'
+import CtaGroup from '@/components/ui/CtaGroup'
 
 export default function TextBlockSection({ content }: { content: SectionContent }) {
   const title = str(content, 'title')
@@ -9,8 +8,7 @@ export default function TextBlockSection({ content }: { content: SectionContent 
   const body = str(content, 'body')
   const subtext = str(content, 'subtext')
   const imageUrl = str(content, 'imageUrl')
-  const cta = str(content, 'cta')
-  const ctaUrl = str(content, 'ctaUrl')
+  const ctas = getCtas(content, 'ctas')
 
   if (!title && !body && !imageUrl) return null
 
@@ -20,7 +18,7 @@ export default function TextBlockSection({ content }: { content: SectionContent 
         <div className={`grid grid-cols-1 ${imageUrl ? 'lg:grid-cols-2 gap-12 lg:gap-16 items-center' : ''}`}>
           
           {/* Content Area */}
-          <div className={!imageUrl ? 'text-center mx-auto max-w-3xl' : ''}>
+          <div className={!imageUrl ? 'text-start mx-auto max-w-3xl' : ''}>
             {title && (
               <h2 className="text-3xl lg:text-4xl font-extrabold text-slate-900 mb-4">
                 {title}
@@ -47,12 +45,7 @@ export default function TextBlockSection({ content }: { content: SectionContent 
               </p>
             )}
 
-            {cta && (
-              <Link href={ctaUrl || '#'} className="btn-primary inline-flex">
-                {cta}
-                <ChevronRight size={18} className="ml-1" />
-              </Link>
-            )}
+            <CtaGroup ctas={ctas} align="start" />
           </div>
 
           {/* Image Area */}

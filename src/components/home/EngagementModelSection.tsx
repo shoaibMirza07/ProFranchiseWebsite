@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Link } from '@/lib/navigation'
 import { ArrowRight } from 'lucide-react'
+import CtaGroup, { CtaItem } from '@/components/ui/CtaGroup'
 
 type PillarKey = 'brand' | 'operator' | 'consumer' | 'employees' | 'supplyChain' | 'technology'
 
@@ -21,7 +22,7 @@ type Props = {
   // Tab 3: How You Invest
   investTitle: string
   investSubtitle: string
-  investCta: string
+  investCtas?: CtaItem[]
   steps: Array<{ number: string; label: string; desc: string }>
 }
 
@@ -86,7 +87,7 @@ function segmentPath(cx: number, cy: number, outerR: number, innerR: number, ang
 
 // ─── Framework Tab (Hexagon) ──────────────────────────────────────────────────
 
-function FrameworkTab({ pillars }: { pillars: Props['pillars'] }) {
+export function FrameworkTab({ pillars }: { pillars: Props['pillars'] }) {
   const [active, setActive] = useState<PillarKey>('brand')
 
   const CX = 250
@@ -395,7 +396,7 @@ function SelectTab({ title, subtitle, criteria }: { title: string; subtitle: str
 
 // ─── Invest Tab (How You Invest) ──────────────────────────────────────────────
 
-function InvestTab({ title, subtitle, cta, steps }: { title: string; subtitle: string; cta: string; steps: Props['steps'] }) {
+function InvestTab({ title, subtitle, ctas, steps }: { title: string; subtitle: string; ctas?: CtaItem[]; steps: Props['steps'] }) {
   return (
     <div>
       <div className="text-center mb-10">
@@ -437,14 +438,7 @@ function InvestTab({ title, subtitle, cta, steps }: { title: string; subtitle: s
         </div>
       </div>
 
-      {cta && (
-        <div className="text-center mt-12">
-          <Link href="/contact" className="btn-primary text-base">
-            {cta}
-            <ArrowRight size={18} />
-          </Link>
-        </div>
-      )}
+      <CtaGroup ctas={ctas} align="center" className="mt-12" />
     </div>
   )
 }
@@ -460,7 +454,7 @@ export default function EngagementModelSection({
   criteria,
   investTitle,
   investSubtitle,
-  investCta,
+  investCtas,
   steps,
 }: Props) {
   const [activeTab, setActiveTab] = useState<TabId>('framework')
@@ -522,7 +516,7 @@ export default function EngagementModelSection({
               <SelectTab title={criteriaTitle} subtitle={criteriaSubtitle} criteria={criteria} />
             )}
             {activeTab === 'invest' && (
-              <InvestTab title={investTitle} subtitle={investSubtitle} cta={investCta} steps={steps} />
+              <InvestTab title={investTitle} subtitle={investSubtitle} ctas={investCtas} steps={steps} />
             )}
           </motion.div>
         </AnimatePresence>

@@ -1,5 +1,6 @@
 import { Link } from '@/lib/navigation'
 import { ArrowRight } from 'lucide-react'
+import CtaGroup, { CtaItem } from '@/components/ui/CtaGroup'
 
 type StepData = {
   number: string
@@ -10,11 +11,11 @@ type StepData = {
 type Props = {
   title: string
   subtitle: string
-  cta: string
+  ctas?: CtaItem[]
   steps: StepData[]
 }
 
-export default function InvestSection({ title, subtitle, cta, steps }: Props) {
+export default function InvestSection({ title, subtitle, ctas, steps }: Props) {
   return (
     <section className="section-padding bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -55,15 +56,8 @@ export default function InvestSection({ title, subtitle, cta, steps }: Props) {
           </div>
         </div>
 
-        {/* CTA */}
-        {cta && (
-          <div className="text-center mt-14">
-            <Link href="/contact" className="btn-primary text-base">
-              {cta}
-              <ArrowRight size={18} />
-            </Link>
-          </div>
-        )}
+        {/* CTAs */}
+        <CtaGroup ctas={ctas} align="center" className="mt-14" />
       </div>
     </section>
   )

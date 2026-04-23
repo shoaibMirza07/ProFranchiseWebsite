@@ -1,6 +1,6 @@
 import { getLocale } from 'next-intl/server'
 import { prisma } from '@/lib/prisma'
-import { getPageSectionsOrdered, getSettings, str, arr, obj, SectionContent } from '@/lib/content'
+import { getPageSectionsOrdered, getSettings, str, arr, obj, getCtas, CtaData, SectionContent } from '@/lib/content'
 import HeroBanner from '@/components/home/HeroBanner'
 import IntroSection from '@/components/home/IntroSection'
 import EngagementModelSection from '@/components/home/EngagementModelSection'
@@ -12,7 +12,7 @@ import TextBlockSection from '@/components/ui/TextBlockSection'
 import InvestSection from '@/components/ui/InvestSection'
 
 type PillarData = { label: string; desc: string; imageUrl?: string; diagramUrl?: string }
-type SlideData = { label: string; title: string; imageUrl?: string; ctaText?: string; ctaUrl?: string; subtitle?: string; titleSize?: string }
+type SlideData = { label: string; title: string; imageUrl?: string; ctas?: CtaData[]; subtitle?: string; titleSize?: string }
 type CriterionData = { number: string; label: string; desc: string }
 type StepData = { number: string; label: string; desc: string }
 
@@ -87,7 +87,7 @@ export default async function HomePage() {
               criteria={arr<CriterionData>(selectionContent, 'criteria')}
               investTitle={str(investContent, 'title')}
               investSubtitle={str(investContent, 'subtitle')}
-              investCta={str(investContent, 'cta')}
+              investCtas={getCtas(investContent, 'ctas')}
               steps={arr<StepData>(investContent, 'steps')}
             />
           )
@@ -95,7 +95,11 @@ export default async function HomePage() {
 
         switch (type) {
           case 'hero':
-            return <HeroBanner key={id} slides={arr<SlideData>(content, 'slides')} cta={str(content, 'cta')} bgUrl={str(content, 'imageUrl')} />
+            const slides = arr<any>(content, 'slides').map(s => ({
+              ...s,
+              ctas: getCtas(s, 'ctas')
+            }))
+            return <HeroBanner key={id} slides={slides} ctas={getCtas(content, 'ctas')} bgUrl={str(content, 'imageUrl')} />
 
           case 'intro':
             return (
@@ -104,6 +108,7 @@ export default async function HomePage() {
                 title={str(content, 'title')}
                 body={str(content, 'body')}
                 subtext={str(content, 'subtext')}
+                ctas={getCtas(content, 'ctas')}
                 settings={settings}
                 locale={locale}
               />
@@ -119,7 +124,7 @@ export default async function HomePage() {
                 brands={brands}
                 title={str(content, 'title')}
                 subtitle={str(content, 'subtitle')}
-                cta={str(content, 'cta')}
+                ctas={getCtas(content, 'ctas')}
                 locale={locale}
               />
             )
