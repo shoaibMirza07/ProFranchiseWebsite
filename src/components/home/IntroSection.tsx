@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { motion, useInView } from 'framer-motion'
+import CtaGroup, { CtaItem } from '@/components/ui/CtaGroup'
 
 type Settings = Record<string, string>
 
@@ -35,7 +36,7 @@ type StatProps = {
 function Stat({ value, suffix, label, active }: StatProps) {
   const count = useAnimatedCounter(value, active)
   return (
-    <div className="text-center">
+    <div className="text-start">
       <div
         className="text-5xl lg:text-6xl font-black"
         style={{
@@ -56,11 +57,12 @@ type Props = {
   title: string
   body: string
   subtext: string
+  ctas?: CtaItem[]
   settings: Settings
   locale: string
 }
 
-export default function IntroSection({ title, body, subtext, settings, locale }: Props) {
+export default function IntroSection({ title, body, subtext, ctas, settings, locale }: Props) {
   const ref = useRef<HTMLDivElement>(null)
   const inView = useInView(ref, { once: true, margin: '-80px' })
   const isAr = locale === 'ar'
@@ -94,7 +96,7 @@ export default function IntroSection({ title, body, subtext, settings, locale }:
               className="absolute left-0 top-1 bottom-1 w-1 rounded-full hidden lg:block"
               style={{ background: 'linear-gradient(180deg, #009B91, #0B4D32)' }}
             />
-            <div className="lg:pl-6">
+            <div className="lg:ps-6">
               <h2 className="text-3xl lg:text-4xl font-extrabold text-slate-900 leading-tight mb-5">
                 {title}
               </h2>
@@ -102,10 +104,11 @@ export default function IntroSection({ title, body, subtext, settings, locale }:
                 {body}
               </p>
               {subtext && (
-                <p className="text-slate-400 text-sm leading-relaxed italic border-l-2 border-teal-200 pl-4">
+                <p className="text-slate-400 text-sm leading-relaxed italic border-s-2 border-teal-200 ps-4 mb-6">
                   {subtext}
                 </p>
               )}
+              <CtaGroup ctas={ctas} />
             </div>
           </motion.div>
 
@@ -124,7 +127,7 @@ export default function IntroSection({ title, body, subtext, settings, locale }:
               ].map((stat, i) => (
                 <div
                   key={i}
-                  className="text-center rounded-2xl p-5 border border-slate-100 bg-white shadow-sm"
+                  className="text-start rounded-2xl p-5 border border-slate-100 bg-white shadow-sm"
                   style={{ boxShadow: '0 4px 24px rgba(0,155,145,0.07)' }}
                 >
                   <Stat value={stat.value} suffix={stat.suffix} label={stat.label} active={inView} />

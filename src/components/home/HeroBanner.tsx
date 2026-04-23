@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence, type Variants } from 'framer-motion'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { Link } from '@/lib/navigation'
+import CtaGroup, { CtaItem } from '@/components/ui/CtaGroup'
 
 const SLIDE_INTERVAL = 5000
 
@@ -19,17 +19,16 @@ type SlideData = {
   titleSize?: string
   imageUrl?: string
   subtitle?: string
-  ctaText?: string
-  ctaUrl?: string
+  ctas?: CtaItem[]
 }
 
 type Props = {
   slides: SlideData[]
-  cta: string
+  ctas?: CtaItem[]
   bgUrl?: string
 }
 
-export default function HeroBanner({ slides, cta, bgUrl }: Props) {
+export default function HeroBanner({ slides, ctas, bgUrl }: Props) {
   const displaySlides = slides.length > 0 ? slides : [{ label: '', title: '' }]
 
   const [current, setCurrent] = useState(0)
@@ -155,16 +154,8 @@ export default function HeroBanner({ slides, cta, bgUrl }: Props) {
                   </p>
                 )}
 
-                {/* CTA */}
-                {(slide.ctaText || cta) && (
-                  <Link
-                    href={slide.ctaUrl || '/portfolio'}
-                    className="btn-primary text-base"
-                  >
-                    {slide.ctaText || cta}
-                    <ChevronRight size={18} />
-                  </Link>
-                )}
+                {/* CTAs */}
+                <CtaGroup ctas={slide.ctas?.length ? slide.ctas : ctas} />
               </div>
 
               {slide.imageUrl && (

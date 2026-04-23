@@ -77,3 +77,23 @@ export function obj(content: SectionContent, key: string): Record<string, unknow
   const v = content[key]
   return v && typeof v === 'object' && !Array.isArray(v) ? (v as Record<string, unknown>) : {}
 }
+
+export type CtaData = {
+  text: string;
+  url: string;
+  variant: string;
+}
+
+/** Safely extracts an array of CTAs, falling back to legacy single CTA fields if needed. */
+export function getCtas(content: SectionContent, key = 'ctas'): CtaData[] {
+  const ctas = arr<CtaData>(content, key)
+  if (ctas.length > 0) return ctas
+  
+  // Legacy fallback
+  const ctaText = str(content, 'cta') || str(content, 'ctaText')
+  const ctaUrl = str(content, 'ctaUrl')
+  if (ctaText) {
+    return [{ text: ctaText, url: ctaUrl || '#', variant: 'primary' }]
+  }
+  return []
+}
