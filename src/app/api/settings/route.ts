@@ -1,4 +1,5 @@
 import { NextRequest } from 'next/server'
+import { revalidatePath } from 'next/cache'
 import { requireAuth, ok } from '@/lib/api-helpers'
 import { prisma } from '@/lib/prisma'
 
@@ -34,6 +35,7 @@ export async function POST(req: NextRequest) {
     )
   )
 
+  revalidatePath('/', 'layout')
   return ok(results)
 }
 
@@ -54,5 +56,6 @@ export async function PUT(req: NextRequest) {
     )
   )
 
+  revalidatePath('/', 'layout')
   return ok(results)
 }

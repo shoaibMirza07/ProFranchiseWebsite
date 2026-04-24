@@ -69,8 +69,8 @@ export default function Header() {
         className="fixed top-0.5 inset-x-0 z-50 transition-all duration-300"
         style={{
           background: scrolled
-            ? 'rgba(7,25,15,0.98)'
-            : 'rgba(7,25,15,0.82)',
+            ? 'rgba(var(--color-header-rgb, 7, 25, 15), 0.98)'
+            : 'rgba(var(--color-header-rgb, 7, 25, 15), 0.82)',
           backdropFilter: 'blur(16px)',
           WebkitBackdropFilter: 'blur(16px)',
           borderBottom: scrolled ? '1px solid rgba(0,155,145,0.25)' : '1px solid rgba(255,255,255,0.08)',

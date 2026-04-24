@@ -104,7 +104,7 @@ export default function OurBrandsSection({ brands, title, subtitle, ctas, locale
                   transition={{ delay: i * 0.07 }}
                   className="shrink-0 w-64"
                 >
-                  <div className="bg-white rounded-2xl overflow-hidden border border-slate-100 card-hover h-full flex flex-col">
+                  <div className="rounded-2xl overflow-hidden border border-slate-100 card-hover h-full flex flex-col" style={{ background: 'var(--color-slide-bg, #ffffff)' }}>
                     {/* Logo area */}
                     <div className="relative h-44 bg-slate-50 overflow-hidden">
                       {brand.logoUrl ? (
@@ -143,7 +143,8 @@ export default function OurBrandsSection({ brands, title, subtitle, ctas, locale
           {canPrev && (
             <button
               onClick={() => scroll('left')}
-              className="absolute -left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white shadow-lg border border-slate-100 flex items-center justify-center text-slate-700 hover:text-[#009B91] transition-colors z-10"
+              className="absolute -left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white shadow-lg border border-slate-100 flex items-center justify-center transition-colors z-10 hover:text-[#009B91]"
+              style={{ color: 'var(--color-arrow, #475569)' }}
               aria-label="Scroll left"
             >
               <ChevronLeft size={20} />
@@ -152,7 +153,8 @@ export default function OurBrandsSection({ brands, title, subtitle, ctas, locale
           {canNext && (
             <button
               onClick={() => scroll('right')}
-              className="absolute -right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white shadow-lg border border-slate-100 flex items-center justify-center text-slate-700 hover:text-[#009B91] transition-colors z-10"
+              className="absolute -right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white shadow-lg border border-slate-100 flex items-center justify-center transition-colors z-10 hover:text-[#009B91]"
+              style={{ color: 'var(--color-arrow, #475569)' }}
               aria-label="Scroll right"
             >
               <ChevronRight size={20} />
