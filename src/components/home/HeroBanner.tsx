@@ -8,9 +8,9 @@ import CtaGroup, { CtaItem } from '@/components/ui/CtaGroup'
 const SLIDE_INTERVAL = 5000
 
 const GRADIENTS = [
-  'linear-gradient(135deg, #0B4D32 0%, #009B91 100%)',
-  'linear-gradient(135deg, #003d28 0%, #0B4D32 50%, #009B91 100%)',
-  'linear-gradient(135deg, #009B91 0%, #0B4D32 100%)',
+  'linear-gradient(135deg, var(--color-forest, #0B4D32) 0%, var(--color-teal, #009B91) 100%)',
+  'linear-gradient(135deg, var(--color-forest, #0B4D32) 0%, var(--color-teal, #009B91) 50%, var(--color-forest, #0B4D32) 100%)',
+  'linear-gradient(135deg, var(--color-teal, #009B91) 0%, var(--color-forest, #0B4D32) 100%)',
 ]
 
 type SlideData = {
@@ -190,14 +190,16 @@ export default function HeroBanner({ slides, ctas, bgUrl }: Props) {
         <>
           <button
             onClick={prev}
-            className="absolute left-4 lg:left-8 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full border border-white/30 flex items-center justify-center text-white hover:bg-white/20 transition-colors backdrop-blur-sm"
+            className="absolute left-4 lg:left-8 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full border border-white/30 flex items-center justify-center hover:bg-white/20 transition-colors backdrop-blur-sm"
+            style={{ color: 'var(--color-arrow, #ffffff)' }}
             aria-label="Previous slide"
           >
             <ChevronLeft size={20} />
           </button>
           <button
             onClick={next}
-            className="absolute right-4 lg:right-8 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full border border-white/30 flex items-center justify-center text-white hover:bg-white/20 transition-colors backdrop-blur-sm"
+            className="absolute right-4 lg:right-8 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full border border-white/30 flex items-center justify-center hover:bg-white/20 transition-colors backdrop-blur-sm"
+            style={{ color: 'var(--color-arrow, #ffffff)' }}
             aria-label="Next slide"
           >
             <ChevronRight size={20} />

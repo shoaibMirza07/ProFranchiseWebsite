@@ -68,7 +68,7 @@ export default async function Footer() {
     : QUICK_LINKS.map((l, i) => ({ ...l, id: String(i), order: i }))
 
   return (
-    <footer style={{ background: '#0B4D32' }} className="text-white">
+    <footer style={{ background: 'var(--color-footer-bg, #0B4D32)' }} className="text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 lg:py-20">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-10 lg:gap-16">
           {/* LEFT: Logo + tagline + address */}
