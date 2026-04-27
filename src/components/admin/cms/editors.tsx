@@ -80,6 +80,89 @@ function AddBtn({ label, onClick }: { label: string; onClick(): void }) {
   )
 }
 
+// ─── CTA List Editor (Shared) ────────────────────────────────────────────────
+
+type CtaConfig = {
+  _id: string; textEn: string; textAr: string; url: string; variant: string;
+}
+
+function parseCtas(en: Record<string, unknown>, ar: Record<string, unknown>, key: string = 'ctas'): CtaConfig[] {
+  // Backwards compatibility check
+  const ctaEnStr = str(en, 'cta') || str(en, 'ctaText')
+  const ctaArStr = str(ar, 'cta') || str(ar, 'ctaText')
+  const ctaUrlStr = str(en, 'ctaUrl') || str(ar, 'ctaUrl') || ''
+  
+  const eC = getArr<Record<string, unknown>>(en, key)
+  const aC = getArr<Record<string, unknown>>(ar, key)
+  
+  if (eC.length === 0 && aC.length === 0 && (ctaEnStr || ctaArStr)) {
+    return [{ _id: `legacy-${Date.now()}`, textEn: ctaEnStr, textAr: ctaArStr, url: ctaUrlStr, variant: 'primary' }]
+  }
+
+  const len = Math.max(eC.length, aC.length)
+  return Array.from({ length: len }, (_, i) => ({
+    _id: `${i}-${Date.now()}`,
+    textEn: str(eC[i] ?? {}, 'text'), textAr: str(aC[i] ?? {}, 'text'),
+    url: str(eC[i] ?? {}, 'url') || str(aC[i] ?? {}, 'url'),
+    variant: str(eC[i] ?? {}, 'variant') || str(aC[i] ?? {}, 'variant') || 'primary',
+  }))
+}
+
+function CtaListEditor({ ctas, setCtas, label = "Call to Actions (CTAs)" }: { ctas: CtaConfig[], setCtas: React.Dispatch<React.SetStateAction<CtaConfig[]>>, label?: string }) {
+  const upd = (idx: number, f: keyof CtaConfig, v: string) =>
+    setCtas(p => p.map((c, i) => i === idx ? { ...c, [f]: v } : c))
+  const move = (idx: number, dir: 'up' | 'down') => setCtas(p => {
+    const n = [...p]; const si = dir === 'up' ? idx - 1 : idx + 1
+    ;[n[idx], n[si]] = [n[si], n[idx]]; return n
+  })
+
+  return (
+    <div className="space-y-3">
+      <div className="flex items-center justify-between">
+        <SectionDivider label={label} />
+        <AddBtn label="Add CTA" onClick={() => setCtas(p => [...p, {
+          _id: `new-${Date.now()}`, textEn: '', textAr: '', url: '', variant: 'primary'
+        }])} />
+      </div>
+      {ctas.map((cta, idx) => (
+        <ItemCard key={cta._id}
+          label={`CTA ${idx + 1}${cta.textEn ? ` — ${cta.textEn}` : ''}`}
+          canUp={idx > 0} canDown={idx < ctas.length - 1}
+          onMoveUp={() => move(idx, 'up')} onMoveDown={() => move(idx, 'down')}
+          onRemove={() => setCtas(p => p.filter((_, i) => i !== idx))}
+        >
+          <BilField label="Button Text"
+            enValue={cta.textEn} arValue={cta.textAr}
+            onEnChange={v => upd(idx, 'textEn', v)} onArChange={v => upd(idx, 'textAr', v)} />
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <p className="text-sm font-semibold text-gray-700 mb-1.5">Button URL</p>
+              <Input value={cta.url} placeholder="/contact" onChange={e => upd(idx, 'url', e.target.value)} />
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-gray-700 mb-1.5">Style Variant</p>
+              <select value={cta.variant} onChange={e => upd(idx, 'variant', e.target.value)} className={`${IC} w-full`}>
+                <option value="primary">Primary (Solid Gradient)</option>
+                <option value="outline">Outline</option>
+                <option value="ghost">Ghost (Text only)</option>
+              </select>
+            </div>
+          </div>
+        </ItemCard>
+      ))}
+    </div>
+  )
+}
+
+function getCtasPayload(ctas: CtaConfig[]) {
+  if (ctas.length === 0) return { enCtas: undefined, arCtas: undefined }
+  return {
+    enCtas: ctas.map(c => ({ text: c.textEn, url: c.url, variant: c.variant })),
+    arCtas: ctas.map(c => ({ text: c.textAr, url: c.url, variant: c.variant }))
+  }
+}
+
+
 // ─── Hero Editor ───────────────────────────────────────────────────────────────
 
 type Slide = {
@@ -87,8 +170,7 @@ type Slide = {
   eyebrowEn: string; eyebrowAr: string
   titleEn: string; titleAr: string
   subtitleEn: string; subtitleAr: string
-  ctaTextEn: string; ctaTextAr: string
-  ctaUrl: string
+  ctas: CtaConfig[]
   titleSize?: string
 }
 
@@ -105,8 +187,7 @@ function parseSlides(en: Record<string, unknown>, ar: Record<string, unknown>): 
       eyebrowAr: str(a, 'label') || str(a, 'eyebrow'),
       titleEn: str(e, 'title'), titleAr: str(a, 'title'),
       subtitleEn: str(e, 'subtitle'), subtitleAr: str(a, 'subtitle'),
-      ctaTextEn: str(e, 'ctaText'), ctaTextAr: str(a, 'ctaText'),
-      ctaUrl: str(e, 'ctaUrl') || str(a, 'ctaUrl'),
+      ctas: parseCtas(e, a, 'ctas'),
       titleSize: str(e, 'titleSize') || str(a, 'titleSize') || 'text-5xl',
     }
   })
@@ -116,7 +197,7 @@ function blankSlide(): Slide {
   return {
     _id: `new-${Date.now()}`, imageUrl: '',
     eyebrowEn: '', eyebrowAr: '', titleEn: '', titleAr: '',
-    subtitleEn: '', subtitleAr: '', ctaTextEn: '', ctaTextAr: '', ctaUrl: '',
+    subtitleEn: '', subtitleAr: '', ctas: [],
     titleSize: 'text-5xl',
   }
 }
@@ -127,8 +208,7 @@ export const HeroEditor = forwardRef<EditorRef, EP>(function HeroEditor({ conten
   const [titleAr, setTitleAr] = useState(str(contentAr, 'title'))
   const [subtitleEn, setSubtitleEn] = useState(str(contentEn, 'subtitle'))
   const [subtitleAr, setSubtitleAr] = useState(str(contentAr, 'subtitle'))
-  const [ctaEn, setCtaEn] = useState(str(contentEn, 'cta'))
-  const [ctaAr, setCtaAr] = useState(str(contentAr, 'cta'))
+  const [globalCtas, setGlobalCtas] = useState<CtaConfig[]>(() => parseCtas(contentEn, contentAr, 'ctas'))
   const [slides, setSlides] = useState<Slide[]>(() => parseSlides(contentEn, contentAr))
 
   useImperativeHandle(ref, () => ({
@@ -140,16 +220,18 @@ export const HeroEditor = forwardRef<EditorRef, EP>(function HeroEditor({ conten
       if (titleAr) ar.title = titleAr
       if (subtitleEn) en.subtitle = subtitleEn
       if (subtitleAr) ar.subtitle = subtitleAr
-      if (ctaEn) en.cta = ctaEn
-      if (ctaAr) ar.cta = ctaAr
+      
+      const { enCtas, arCtas } = getCtasPayload(globalCtas)
+      if (enCtas) en.ctas = enCtas
+      if (arCtas) ar.ctas = arCtas
+
       if (slides.length > 0) {
         en.slides = slides.map(sl => ({
           ...(sl.imageUrl && { imageUrl: sl.imageUrl }),
           ...(sl.eyebrowEn && { label: sl.eyebrowEn }),
           ...(sl.titleEn && { title: sl.titleEn }),
           ...(sl.subtitleEn && { subtitle: sl.subtitleEn }),
-          ...(sl.ctaTextEn && { ctaText: sl.ctaTextEn }),
-          ...(sl.ctaUrl && { ctaUrl: sl.ctaUrl }),
+          ...(sl.ctas.length > 0 && { ctas: getCtasPayload(sl.ctas).enCtas }),
           titleSize: sl.titleSize ?? 'text-5xl',
         }))
         ar.slides = slides.map(sl => ({
@@ -157,14 +239,13 @@ export const HeroEditor = forwardRef<EditorRef, EP>(function HeroEditor({ conten
           ...(sl.eyebrowAr && { label: sl.eyebrowAr }),
           ...(sl.titleAr && { title: sl.titleAr }),
           ...(sl.subtitleAr && { subtitle: sl.subtitleAr }),
-          ...(sl.ctaTextAr && { ctaText: sl.ctaTextAr }),
-          ...(sl.ctaUrl && { ctaUrl: sl.ctaUrl }),
+          ...(sl.ctas.length > 0 && { ctas: getCtasPayload(sl.ctas).arCtas }),
           titleSize: sl.titleSize ?? 'text-5xl',
         }))
       }
       return { en, ar }
     }
-  }), [bgUrl, titleEn, titleAr, subtitleEn, subtitleAr, ctaEn, ctaAr, slides])
+  }), [bgUrl, titleEn, titleAr, subtitleEn, subtitleAr, globalCtas, slides])
 
   const upd = (idx: number) => (f: keyof Slide) => (v: string) =>
     setSlides(p => p.map((sl, i) => i === idx ? { ...sl, [f]: v } : sl))
@@ -192,12 +273,7 @@ export const HeroEditor = forwardRef<EditorRef, EP>(function HeroEditor({ conten
         <AddBtn label="Add Slide" onClick={() => setSlides(p => [...p, blankSlide()])} />
       </div>
 
-      {slides.length > 0 && (
-        <BilField label="Global CTA Button (below all slides)"
-          enValue={ctaEn} arValue={ctaAr}
-          onEnChange={setCtaEn} onArChange={setCtaAr}
-          enPlaceholder="e.g. Discover Our Portfolio" />
-      )}
+      <CtaListEditor ctas={globalCtas} setCtas={setGlobalCtas} label="Global CTAs (below all slides)" />
 
       <div className="space-y-3">
         {slides.map((sl, idx) => (
@@ -222,17 +298,13 @@ export const HeroEditor = forwardRef<EditorRef, EP>(function HeroEditor({ conten
             <BilField label="Subtitle" type="textarea"
               enValue={sl.subtitleEn} arValue={sl.subtitleAr}
               onEnChange={upd(idx)('subtitleEn')} onArChange={upd(idx)('subtitleAr')} />
-            <BilField label="CTA Button Text"
-              enValue={sl.ctaTextEn} arValue={sl.ctaTextAr}
-              onEnChange={upd(idx)('ctaTextEn')} onArChange={upd(idx)('ctaTextAr')}
-              enPlaceholder="e.g. Get Started" />
-            <div>
-              <p className="text-sm font-semibold text-gray-700 mb-1.5">
-                CTA URL <span className="font-normal text-xs text-gray-400">(same for both languages)</span>
-              </p>
-              <Input value={sl.ctaUrl} placeholder="/portfolio"
-                onChange={e => upd(idx)('ctaUrl')(e.target.value)} />
-            </div>
+            
+            <CtaListEditor 
+              ctas={sl.ctas} 
+              setCtas={(val) => setSlides(p => p.map((s, i) => i === idx ? { ...s, ctas: typeof val === 'function' ? val(s.ctas) : val } : s))} 
+              label="Slide Specific CTAs" 
+            />
+
             <div>
               <p className="text-sm font-semibold text-gray-700 mb-1.5">
                 Title Size <span className="font-normal text-xs text-gray-400">(controls heading size on home hero)</span>
@@ -268,9 +340,7 @@ export const SimpleEditor = forwardRef<EditorRef, EP>(function SimpleEditor({ co
   const [bodyAr, setBodyAr] = useState(str(contentAr, 'body'))
   const [subtextEn, setSubtextEn] = useState(str(contentEn, 'subtext'))
   const [subtextAr, setSubtextAr] = useState(str(contentAr, 'subtext'))
-  const [ctaEn, setCtaEn] = useState(str(contentEn, 'cta'))
-  const [ctaAr, setCtaAr] = useState(str(contentAr, 'cta'))
-  const [ctaUrl, setCtaUrl] = useState(str(contentEn, 'ctaUrl') || str(contentAr, 'ctaUrl'))
+  const [ctas, setCtas] = useState<CtaConfig[]>(() => parseCtas(contentEn, contentAr))
 
   useImperativeHandle(ref, () => ({
     getPayload() {
@@ -281,11 +351,14 @@ export const SimpleEditor = forwardRef<EditorRef, EP>(function SimpleEditor({ co
       if (subtitleEn) en.subtitle = subtitleEn; if (subtitleAr) ar.subtitle = subtitleAr
       if (bodyEn) en.body = bodyEn; if (bodyAr) ar.body = bodyAr
       if (subtextEn) en.subtext = subtextEn; if (subtextAr) ar.subtext = subtextAr
-      if (ctaEn) en.cta = ctaEn; if (ctaAr) ar.cta = ctaAr
-      if (ctaUrl) { en.ctaUrl = ctaUrl; ar.ctaUrl = ctaUrl }
+      
+      const { enCtas, arCtas } = getCtasPayload(ctas)
+      if (enCtas) en.ctas = enCtas
+      if (arCtas) ar.ctas = arCtas
+
       return { en, ar }
     }
-  }), [imageUrl, titleEn, titleAr, subtitleEn, subtitleAr, bodyEn, bodyAr, subtextEn, subtextAr, ctaEn, ctaAr, ctaUrl])
+  }), [imageUrl, titleEn, titleAr, subtitleEn, subtitleAr, bodyEn, bodyAr, subtextEn, subtextAr, ctas])
 
   return (
     <div className="space-y-4">
@@ -304,13 +377,7 @@ export const SimpleEditor = forwardRef<EditorRef, EP>(function SimpleEditor({ co
       <BilField label="Subtext" hint="small text below body"
         enValue={subtextEn} arValue={subtextAr}
         onEnChange={setSubtextEn} onArChange={setSubtextAr} />
-      <BilField label="CTA Button Text"
-        enValue={ctaEn} arValue={ctaAr}
-        onEnChange={setCtaEn} onArChange={setCtaAr} />
-      <div>
-        <p className="text-sm font-semibold text-gray-700 mb-1.5">CTA URL</p>
-        <Input value={ctaUrl} onChange={e => setCtaUrl(e.target.value)} placeholder="/contact" />
-      </div>
+      <CtaListEditor ctas={ctas} setCtas={setCtas} />
     </div>
   )
 })
@@ -579,18 +646,18 @@ export const InvestEditor = forwardRef<EditorRef, EP>(function InvestEditor({ co
   const [titleAr, setTitleAr] = useState(str(contentAr, 'title'))
   const [subtitleEn, setSubtitleEn] = useState(str(contentEn, 'subtitle'))
   const [subtitleAr, setSubtitleAr] = useState(str(contentAr, 'subtitle'))
-  const [ctaEn, setCtaEn] = useState(str(contentEn, 'cta'))
-  const [ctaAr, setCtaAr] = useState(str(contentAr, 'cta'))
+  const [ctas, setCtas] = useState<CtaConfig[]>(() => parseCtas(contentEn, contentAr, 'ctas'))
   const [items, setItems] = useState<NItem[]>(() => parseNItems(contentEn, contentAr, 'steps'))
 
   useImperativeHandle(ref, () => ({
     getPayload() {
+      const { enCtas, arCtas } = getCtasPayload(ctas)
       return {
-        en: { title: titleEn, subtitle: subtitleEn, cta: ctaEn, steps: items.map(it => ({ number: it.number, label: it.labelEn, desc: it.descEn })) },
-        ar: { title: titleAr, subtitle: subtitleAr, cta: ctaAr, steps: items.map(it => ({ number: it.number, label: it.labelAr, desc: it.descAr })) },
+        en: { title: titleEn, subtitle: subtitleEn, ctas: enCtas, steps: items.map(it => ({ number: it.number, label: it.labelEn, desc: it.descEn })) },
+        ar: { title: titleAr, subtitle: subtitleAr, ctas: arCtas, steps: items.map(it => ({ number: it.number, label: it.labelAr, desc: it.descAr })) },
       }
     }
-  }), [titleEn, titleAr, subtitleEn, subtitleAr, ctaEn, ctaAr, items])
+  }), [titleEn, titleAr, subtitleEn, subtitleAr, ctas, items])
 
   return (
     <div className="space-y-4">
@@ -599,9 +666,7 @@ export const InvestEditor = forwardRef<EditorRef, EP>(function InvestEditor({ co
       <BilField label="Section Subtitle" type="textarea"
         enValue={subtitleEn} arValue={subtitleAr}
         onEnChange={setSubtitleEn} onArChange={setSubtitleAr} />
-      <BilField label="CTA Button Text"
-        enValue={ctaEn} arValue={ctaAr}
-        onEnChange={setCtaEn} onArChange={setCtaAr} />
+      <CtaListEditor ctas={ctas} setCtas={setCtas} />
       <NItemsList items={items} setItems={setItems} addLabel="Add Step" />
     </div>
   )
@@ -615,19 +680,17 @@ export const CtaEditor = forwardRef<EditorRef, EP>(function CtaEditor({ contentE
   const [titleAr, setTitleAr] = useState(str(contentAr, 'title'))
   const [subtitleEn, setSubtitleEn] = useState(str(contentEn, 'subtitle'))
   const [subtitleAr, setSubtitleAr] = useState(str(contentAr, 'subtitle'))
-  const [ctaTextEn, setCtaTextEn] = useState(str(contentEn, 'ctaText'))
-  const [ctaTextAr, setCtaTextAr] = useState(str(contentAr, 'ctaText'))
-  const [ctaUrl, setCtaUrl] = useState(str(contentEn, 'ctaUrl') || str(contentAr, 'ctaUrl'))
+  const [ctas, setCtas] = useState<CtaConfig[]>(() => parseCtas(contentEn, contentAr, 'ctas'))
 
   useImperativeHandle(ref, () => ({
     getPayload() {
-      const en: Record<string, unknown> = { title: titleEn, subtitle: subtitleEn, ctaText: ctaTextEn }
-      const ar: Record<string, unknown> = { title: titleAr, subtitle: subtitleAr, ctaText: ctaTextAr }
+      const { enCtas, arCtas } = getCtasPayload(ctas)
+      const en: Record<string, unknown> = { title: titleEn, subtitle: subtitleEn, ctas: enCtas }
+      const ar: Record<string, unknown> = { title: titleAr, subtitle: subtitleAr, ctas: arCtas }
       if (bgUrl) { en.imageUrl = bgUrl; ar.imageUrl = bgUrl }
-      if (ctaUrl) { en.ctaUrl = ctaUrl; ar.ctaUrl = ctaUrl }
       return { en, ar }
     }
-  }), [bgUrl, titleEn, titleAr, subtitleEn, subtitleAr, ctaTextEn, ctaTextAr, ctaUrl])
+  }), [bgUrl, titleEn, titleAr, subtitleEn, subtitleAr, ctas])
 
   return (
     <div className="space-y-4">
@@ -640,13 +703,7 @@ export const CtaEditor = forwardRef<EditorRef, EP>(function CtaEditor({ contentE
       <BilField label="Supporting Text" type="textarea"
         enValue={subtitleEn} arValue={subtitleAr}
         onEnChange={setSubtitleEn} onArChange={setSubtitleAr} />
-      <BilField label="Button Text"
-        enValue={ctaTextEn} arValue={ctaTextAr}
-        onEnChange={setCtaTextEn} onArChange={setCtaTextAr} />
-      <div>
-        <p className="text-sm font-semibold text-gray-700 mb-1.5">Button URL</p>
-        <Input value={ctaUrl} onChange={e => setCtaUrl(e.target.value)} placeholder="/contact" />
-      </div>
+      <CtaListEditor ctas={ctas} setCtas={setCtas} />
     </div>
   )
 })

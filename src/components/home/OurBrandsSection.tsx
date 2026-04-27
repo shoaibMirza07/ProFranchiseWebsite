@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { Link } from '@/lib/navigation'
 import { ChevronLeft, ChevronRight, ArrowRight } from 'lucide-react'
 import { motion } from 'framer-motion'
+import CtaGroup, { CtaItem } from '@/components/ui/CtaGroup'
 
 type Brand = {
   id: string
@@ -18,7 +19,7 @@ type Props = {
   brands: Brand[]
   title: string
   subtitle: string
-  cta: string
+  ctas?: CtaItem[]
   locale: string
 }
 
@@ -39,7 +40,7 @@ function BrandInitials({ name }: { name: string }) {
   )
 }
 
-export default function OurBrandsSection({ brands, title, subtitle, cta, locale }: Props) {
+export default function OurBrandsSection({ brands, title, subtitle, ctas, locale }: Props) {
   const isAr = locale === 'ar'
   const trackRef = useRef<HTMLDivElement>(null)
   const [canPrev, setCanPrev] = useState(false)
@@ -80,15 +81,9 @@ export default function OurBrandsSection({ brands, title, subtitle, cta, locale 
             </h2>
             <p className="text-slate-500">{subtitle}</p>
           </div>
-          {cta && (
-            <Link
-              href="/portfolio"
-              className="hidden sm:inline-flex items-center gap-1.5 text-sm font-semibold text-[#009B91] hover:text-[#0B4D32] transition-colors"
-            >
-              {cta}
-              <ArrowRight size={16} />
-            </Link>
-          )}
+          <div className="hidden sm:block">
+            <CtaGroup ctas={ctas} align={isAr ? 'start' : 'end'} />
+          </div>
         </div>
 
         {/* Carousel */}
@@ -133,7 +128,7 @@ export default function OurBrandsSection({ brands, title, subtitle, cta, locale 
                           href={`/portfolio/${brand.slug}` as '/'}
                           className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#009B91] hover:text-[#0B4D32] transition-colors"
                         >
-                          {cta || 'Learn More'}
+                          {ctas?.[0]?.text || 'Learn More'}
                           <ArrowRight size={14} />
                         </Link>
                       </div>
@@ -166,13 +161,9 @@ export default function OurBrandsSection({ brands, title, subtitle, cta, locale 
         </div>
 
         {/* Mobile view all */}
-        {cta && (
-          <div className="mt-8 text-center sm:hidden">
-            <Link href="/portfolio" className="btn-outline">
-              {cta}
-            </Link>
-          </div>
-        )}
+        <div className="mt-8 sm:hidden">
+          <CtaGroup ctas={ctas} align="center" />
+        </div>
       </div>
     </section>
   )
