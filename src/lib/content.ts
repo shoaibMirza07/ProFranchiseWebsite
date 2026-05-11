@@ -18,7 +18,8 @@ export async function getPageSections(slug: string, locale: string): Promise<Rec
   for (const section of page.sections) {
     try {
       const raw = locale === 'ar' ? section.contentAr : section.contentEn
-      result[section.type] = JSON.parse(raw || '{}')
+      const parsed = JSON.parse(raw || '{}')
+      result[section.type] = parsed && typeof parsed === 'object' && !Array.isArray(parsed) ? parsed : {}
     } catch {
       result[section.type] = {}
     }
@@ -38,7 +39,8 @@ export async function getPageSectionsOrdered(slug: string, locale: string): Prom
     let content: SectionContent = {}
     try {
       const raw = locale === 'ar' ? section.contentAr : section.contentEn
-      content = JSON.parse(raw || '{}')
+      const parsed = JSON.parse(raw || '{}')
+      content = parsed && typeof parsed === 'object' && !Array.isArray(parsed) ? parsed : {}
     } catch {
       content = {}
     }

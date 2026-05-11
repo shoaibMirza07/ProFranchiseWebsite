@@ -39,7 +39,8 @@ export default async function BrandDetailPage({ params }: Props) {
   let whyPoints: string[] = []
   try {
     const raw = isAr ? brand.whyPointsAr : brand.whyPointsEn
-    whyPoints = JSON.parse(raw)
+    const parsed = JSON.parse(raw)
+    whyPoints = Array.isArray(parsed) ? parsed : []
   } catch {
     whyPoints = []
   }
