@@ -1,4 +1,5 @@
 import { NextRequest } from 'next/server'
+import { revalidatePath } from 'next/cache'
 import { requireAuth, ok, err } from '@/lib/api-helpers'
 import { prisma } from '@/lib/prisma'
 
@@ -56,6 +57,7 @@ export async function POST(
     },
   })
 
+  revalidatePath('/', 'layout')
   return ok(location, 201)
 }
 
@@ -93,6 +95,7 @@ export async function PUT(
     },
   })
 
+  revalidatePath('/', 'layout')
   return ok(updated)
 }
 
@@ -116,5 +119,6 @@ export async function DELETE(
 
   await prisma.brandLocation.delete({ where: { id: locationId } })
 
+  revalidatePath('/', 'layout')
   return ok({ message: 'Location deleted' })
 }

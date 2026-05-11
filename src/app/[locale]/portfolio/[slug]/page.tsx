@@ -141,6 +141,7 @@ export default async function BrandDetailPage({ params }: Props) {
         )}
 
         {/* Branch Locations */}
+        {brand.locations.length > 0 && (
           <section>
             <h2 className="text-2xl font-bold text-slate-900 mb-2 pb-2 border-b border-slate-100">
               {str(labels, 'locations', 'Branch Locations')}
@@ -181,6 +182,7 @@ export default async function BrandDetailPage({ params }: Props) {
               </tbody>
             </table>
           </section>
+        )}
 
         {/* Why This Brand */}
         {whyPoints.length > 0 && (
