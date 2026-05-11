@@ -156,7 +156,12 @@ export default function BrandDetailPage({ params }: { params: Promise<{ id: stri
   }
 
   const safeParseArray = (str: string): string[] => {
-    try { return JSON.parse(str) } catch { return [] }
+    try { 
+      const parsed = JSON.parse(str)
+      return Array.isArray(parsed) ? parsed : []
+    } catch { 
+      return [] 
+    }
   }
 
   const showSaved = (msg = 'Saved!') => {
