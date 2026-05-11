@@ -1,4 +1,5 @@
 import { NextRequest } from 'next/server'
+import { revalidatePath } from 'next/cache'
 import { requireAuth, ok, err } from '@/lib/api-helpers'
 import { prisma } from '@/lib/prisma'
 
@@ -66,6 +67,7 @@ export async function PUT(
     },
   })
 
+  revalidatePath('/', 'layout')
   return ok(brand)
 }
 
@@ -83,5 +85,6 @@ export async function DELETE(
 
   await prisma.brand.delete({ where: { id } })
 
+  revalidatePath('/', 'layout')
   return ok({ message: 'Brand deleted' })
 }
