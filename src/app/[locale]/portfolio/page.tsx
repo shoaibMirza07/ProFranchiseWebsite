@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic'
+
 import { getLocale } from 'next-intl/server'
 import { prisma } from '@/lib/prisma'
 import { getPageSections, str } from '@/lib/content'
