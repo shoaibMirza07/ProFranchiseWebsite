@@ -71,6 +71,9 @@ export async function PUT(
   return ok(brand)
 }
 
+// PATCH is identical to PUT (partial updates) — some admin screens use PATCH
+export { PUT as PATCH }
+
 export async function DELETE(
   _req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
