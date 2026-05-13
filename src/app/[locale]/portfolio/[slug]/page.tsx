@@ -187,7 +187,6 @@ export default async function BrandDetailPage({ params }: Props) {
           </section>
         )}
 
-        {/* Why This Brand */}
         {whyPoints.length > 0 && (
           <section>
             <h2 className="text-2xl font-bold text-slate-900 mb-6 pb-2 border-b border-slate-100">
@@ -201,6 +200,53 @@ export default async function BrandDetailPage({ params }: Props) {
                 </li>
               ))}
             </ul>
+          </section>
+        )}
+
+        {/* Key Contacts */}
+        {brand.contacts.length > 0 && (
+          <section>
+            <h2 className="text-2xl font-bold text-slate-900 mb-6 pb-2 border-b border-slate-100">
+              {str(labels, 'contacts', 'Key Contacts')}
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {brand.contacts.map(({ contact, role }: { contact: { id: string; nameEn: string; nameAr: string; title: string; email: string; phone: string }; role: string }) => (
+                <div
+                  key={contact.id}
+                  className="rounded-xl border border-slate-100 bg-slate-50 p-5 flex flex-col gap-2"
+                >
+                  <div>
+                    <p className="font-semibold text-slate-900">
+                      {isAr ? contact.nameAr || contact.nameEn : contact.nameEn}
+                    </p>
+                    {contact.title && (
+                      <p className="text-sm text-slate-500">{contact.title}</p>
+                    )}
+                    {role && (
+                      <p className="text-xs text-[#009B91] font-medium mt-0.5">{role}</p>
+                    )}
+                  </div>
+                  <div className="flex flex-col gap-1 mt-1">
+                    {contact.phone && (
+                      <a
+                        href={`tel:${contact.phone}`}
+                        className="text-sm text-slate-600 hover:text-[#009B91] transition-colors"
+                      >
+                        📞 {contact.phone}
+                      </a>
+                    )}
+                    {contact.email && (
+                      <a
+                        href={`mailto:${contact.email}`}
+                        className="text-sm text-slate-600 hover:text-[#009B91] transition-colors"
+                      >
+                        ✉️ {contact.email}
+                      </a>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
           </section>
         )}
 
