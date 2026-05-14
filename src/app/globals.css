@@ -53,6 +53,15 @@ body {
   text-align: right;
 }
 
+/* Typography settings (controlled via admin branding panel) */
+p {
+  text-align: var(--text-align, left);
+}
+[dir="rtl"] p {
+  text-align: var(--text-align, right);
+}
+
+
 /* Brand gradient */
 .gradient-brand {
   background: linear-gradient(135deg, var(--color-forest) 0%, var(--color-teal) 100%);

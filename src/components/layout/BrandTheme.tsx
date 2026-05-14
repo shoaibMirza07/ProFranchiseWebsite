@@ -19,13 +19,14 @@ export default async function BrandTheme() {
   let colorAdminSidebar = '#0B4D32'
   let colorHeroOverlayStart = '#0B4D32'
   let colorHeroOverlayEnd = '#009B91'
+  let textAlign = 'left'
 
   try {
     const keys = [
       'colorPrimary', 'colorForest', 'colorHeader', 'colorButton', 
       'colorSlideBg', 'colorArrow', 'colorScrollbar', 'colorFooterBg',
       'colorPageBg', 'colorTextBase', 'colorTextMuted', 'colorAdminSidebar',
-      'colorHeroOverlayStart', 'colorHeroOverlayEnd'
+      'colorHeroOverlayStart', 'colorHeroOverlayEnd', 'textAlign'
     ]
     const rows = await prisma.setting.findMany({
       where: { key: { in: keys } },
@@ -45,6 +46,7 @@ export default async function BrandTheme() {
       if (row.key === 'colorAdminSidebar' && row.value) colorAdminSidebar = row.value
       if (row.key === 'colorHeroOverlayStart' && row.value) colorHeroOverlayStart = row.value
       if (row.key === 'colorHeroOverlayEnd' && row.value) colorHeroOverlayEnd = row.value
+      if (row.key === 'textAlign' && row.value) textAlign = row.value
     }
   } catch {
     // Use defaults if DB not available
@@ -70,6 +72,7 @@ export default async function BrandTheme() {
       --color-admin-sidebar: ${colorAdminSidebar};
       --color-hero-overlay-start-rgb: ${hexToRgb(colorHeroOverlayStart)};
       --color-hero-overlay-end-rgb: ${hexToRgb(colorHeroOverlayEnd)};
+      --text-align: ${textAlign};
     }
   `.trim()
 

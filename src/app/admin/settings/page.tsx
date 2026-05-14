@@ -52,6 +52,7 @@ interface Settings {
   colorHeroOverlayEnd: string
   footerTaglineEn: string
   footerTaglineAr: string
+  textAlign: string
 }
 
 const defaultSettings: Settings = {
@@ -100,6 +101,7 @@ const defaultSettings: Settings = {
   colorHeroOverlayEnd: '#009B91',
   footerTaglineEn: '',
   footerTaglineAr: '',
+  textAlign: 'left',
 }
 
 export default function SettingsPage() {
@@ -187,6 +189,7 @@ export default function SettingsPage() {
         { key: 'colorHeroOverlayEnd', value: settings.colorHeroOverlayEnd, group: 'branding' },
         { key: 'footerTaglineEn', value: settings.footerTaglineEn, group: 'general' },
         { key: 'footerTaglineAr', value: settings.footerTaglineAr, group: 'general' },
+        { key: 'textAlign', value: settings.textAlign, group: 'branding' },
       ]
       const res = await fetch('/api/settings', {
         method: 'POST',
@@ -471,6 +474,35 @@ export default function SettingsPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-gray-100">
               <Field label="Footer Tagline (English)" value={settings.footerTaglineEn} onChange={(v) => set('footerTaglineEn', v)} placeholder="Growth Accelerated" />
               <Field label="Footer Tagline (Arabic)" value={settings.footerTaglineAr} onChange={(v) => set('footerTaglineAr', v)} placeholder="نمو متسارع" />
+            </div>
+
+            {/* Typography */}
+            <div className="pt-4 border-t border-gray-100">
+              <p className="text-sm font-semibold text-gray-700 mb-4">Typography</p>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">Text Align</label>
+                <select
+                  value={settings.textAlign}
+                  onChange={(e) => set('textAlign', e.target.value)}
+                  className="input-brand max-w-xs"
+                >
+                  <option value="left">Left</option>
+                  <option value="center">Center</option>
+                  <option value="right">Right</option>
+                  <option value="justify">Justify</option>
+                </select>
+                <p className="text-xs text-gray-400 mt-1">Controls default body text alignment across pages</p>
+              </div>
+              {/* Live preview */}
+              <div className="mt-4 p-4 rounded-xl border border-gray-100 bg-gray-50">
+                <p className="text-xs font-medium text-gray-500 mb-2">Preview</p>
+                <p
+                  className="text-sm text-gray-700 leading-relaxed"
+                  style={{ textAlign: settings.textAlign as React.CSSProperties['textAlign'] }}
+                >
+                  This is a sample paragraph to preview how your body text will appear across the site. Adjust the alignment control above to see changes reflected here in real time.
+                </p>
+              </div>
             </div>
           </div>
         )}
